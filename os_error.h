@@ -78,6 +78,10 @@
 #define OS_RET_NULL_PTR (-15)
 
 /**
+ * @returns when the OS found something already initialized
+*/
+#define OS_RET_ALREADY_INITED (-16)
+/**
  * @brief Converts POSIX Error messages to our OS Error messages
 */
 int posix_os_ret_error_conv(int ret);
