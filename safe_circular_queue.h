@@ -15,6 +15,10 @@ typedef struct safe_circular_queue_t{
     int head; 
     int tail;
     int num_elements_in_queue;
+
+    // Signals for enqueuing and dequeuing mutexes
+    os_mut_t enqueue_mutex;
+    os_mut_t dequeue_mutex;
 }safe_circular_queue_t;
 
 /**
@@ -35,6 +39,25 @@ int safe_circular_queue_init(safe_circular_queue_t *queue, int num_elements, siz
 int safe_circular_enqueue(safe_circular_queue_t * queue, size_t element_size, void *element);
 
 /**
+ * @brief Theadsafe circular queue enque function
+ * @param safe_circular_queue_t *pointer to queue descripter structure
+ * @param size_t element_size size of element being parsed in
+ * @param void *element pointer to element
+ * @note the element_size is passed in as a check to make sure it's the same size as the item inside the circular queue
+*/
+int safe_circular_enqueue_notimeout(safe_circular_queue_t * queue, size_t element_size, void *element);
+
+/**
+ * @brief Theadsafe circular queue enque function
+ * @param safe_circular_queue_t *pointer to queue descripter structure
+ * @param size_t element_size size of element being parsed in
+ * @param void *element pointer to element
+ * @param uint32_t timeout
+ * @note the element_size is passed in as a check to make sure it's the same size as the item inside the circular queue
+*/
+int safe_circular_enqueue_timeout(safe_circular_queue_t * queue, size_t element_size, void *element, uint32_t timeout_ms);
+
+/**
  * @brief Theadsafe circular queue deque function
  * @param safe_circular_queue_t *pointer to queue descripter structure
  * @param size_t element_size size of memory space of element being copied to
@@ -43,4 +66,22 @@ int safe_circular_enqueue(safe_circular_queue_t * queue, size_t element_size, vo
 */
 int safe_circular_dequeue(safe_circular_queue_t * queue, size_t element_size, void *element);
 
+/**
+ * @brief Theadsafe circular queue deque function
+ * @param safe_circular_queue_t *pointer to queue descripter structure
+ * @param size_t element_size size of memory space of element being copied to
+ * @param void *element pointer to memory space of element being copied into
+ * @note the element_size is passed in as a check to make sure it's the same size as the item inside the circular queue
+*/
+int safe_circular_dequeue_notimeout(safe_circular_queue_t * queue, size_t element_size, void *element);
+
+/**
+ * @brief Theadsafe circular queue deque function
+ * @param safe_circular_queue_t *pointer to queue descripter structure
+ * @param size_t element_size size of memory space of element being copied to
+ * @param void *element pointer to memory space of element being copied into
+ * @param uint32_t timeout 
+ * @note the element_size is passed in as a check to make sure it's the same size as the item inside the circular queue
+*/
+int safe_circular_dequeue_timeout(safe_circular_queue_t * queue, size_t element_size, void *element, uint32_t timeout_ms);
 #endif

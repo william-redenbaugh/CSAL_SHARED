@@ -2,6 +2,8 @@
 #define _EVENT_MANAGEMENT_H
 #include "event_type_list.h"
 #include "../os_mutx.h"
+#include "safe_circular_queue.h"
+
 typedef struct{
     void *ptr;
     int event;
@@ -10,6 +12,8 @@ typedef struct{
 typedef struct{
     os_mut_t local_queue_mutex;
     event_data_t *event_data_queue_cb;
+    safe_circular_queue_t event_queue;
+    
 }local_event_queue_t;
 
 #define EVENT_PEEK_TIMEOUT 0
