@@ -161,3 +161,24 @@ int safe_circular_dequeue_notimeout(safe_circular_queue_t * queue, size_t elemen
         return ret;
     }
 }
+
+int safe_circular_dequeue_timeout(safe_circular_queue_t * queue, size_t element_size, void *element, uint32_t timeout_ms){
+    int ret = safe_circular_dequeue(queue, element_size, element);
+    if(ret == OS_RET_OK){
+        return ret;
+    }
+    else if(ret == OS_RET_LOW_MEM_ERROR){
+        // Try to acquire the lock before we wait
+        // That way it blocks until someone unlocks
+        os_mut_try_entry(&queue->dequeue_mutex);
+        // wait until we dequeue
+        ret = os_mut_entry(&queue->dequeue_mutex, timeout_ms);
+        if(ret != OS_RET_OK){
+            return ret;
+        }
+        return safe_circular_dequeue(queue, element_size, element);
+    }
+    else{
+        return ret;
+    }
+}
