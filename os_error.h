@@ -66,7 +66,6 @@
 */
 #define OS_RET_NOT_OWNED (-13)
 
-
 /**
  * @returns when we have an unsupported feature
 */
