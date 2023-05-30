@@ -23,6 +23,11 @@ typedef struct event_type_queue_ll_t{
     local_event_queue_ll_t *local_event_queue_head;
 }event_type_queue_ll_t;
 
+typedef struct event_data_t{
+    event_type_t event_id; 
+    void *data_ptr;
+}event_data_t;
+
 #define EVENT_PEEK_TIMEOUT 0
 
 /**
@@ -56,7 +61,7 @@ void event_management_init(void *params);
  * @return int mk_err status if an error. Otherwise provides the index of the event_subscribe list. Keep that so that you can consume events that are published. Check out error.h to see more information
  * @note 1 Thread can only subscribe to a single list, implementation limitation
  */
-int subscribe_eventlist(local_event_queue_t *local_eventqueue, int *event_list, int num_events, int event_length_max){
+int subscribe_eventlist(local_event_queue_t *local_eventqueue, int *event_list, int num_events, int event_length_max);
 
 /**
  * @brief Subscribes to an event that can be published

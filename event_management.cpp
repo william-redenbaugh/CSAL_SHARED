@@ -1,7 +1,7 @@
 #include "event_management.h"
 #include "threads_list.h"
 #include "os_error.h"
-#include "os_mutx.h"
+#include "../os_mutx.h"
 
 static os_mut_t event_queue_head_mut;
 static event_type_queue_ll_t *event_queue_head = NULL;
@@ -89,7 +89,7 @@ local_event_queue_t* new_local_eventqueue(void){
     
     os_mut_exit(&queue->local_queue_mutex);
 
-    queue->safe_circular_queue
+    //queue->safe_circular_queue;
     return queue;
 }
 

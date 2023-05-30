@@ -1,28 +1,29 @@
 #include "threads_init.h"
+#include "threads_list.h"
 
-int NUM_THREADS;
+int  NUM_THREADS = sizeof(INIT_THREAD_LIST)/sizeof(task_init_descriptor_t);
+
 void threads_list_init(void)
 {
-    NUM_THREADS = 3;
     for (int n = 0; n < NUM_THREADS; n++)
     {
-        if(THREAD_LIST[n].task_init_fun!= NULL)
-            THREAD_LIST[n].task_init_fun(NULL);
+        if(INIT_THREAD_LIST[n].task_init_fun!= NULL)
+            INIT_THREAD_LIST[n].task_init_fun(NULL);
     }
 
     // Launch each task!
     for (int n = 0; n < NUM_THREADS; n++)
     {
-        if(THREAD_LIST[n].task_fun != NULL){
+        if(INIT_THREAD_LIST[n].task_fun != NULL){
             // New block of memory from heap for stack pointer
             uint8_t *stack_ptr;
-            if(THREAD_LIST[n].stack == NULL){
-                stack_ptr = new uint8_t[THREAD_LIST[n].stack_size];
+            if(INIT_THREAD_LIST[n].stack == NULL){
+                stack_ptr = new uint8_t[INIT_THREAD_LIST[n].stack_size];
             }
             else{
-                stack_ptr = THREAD_LIST[n].stack;
+                stack_ptr = INIT_THREAD_LIST[n].stack;
             }
-            os_add_thread((thread_func_t)THREAD_LIST[n].task_fun, THREAD_LIST[n].param, THREAD_LIST[n].stack_size, stack_ptr);
+            os_add_thread((thread_func_t)INIT_THREAD_LIST[n].task_fun, INIT_THREAD_LIST[n].param, INIT_THREAD_LIST[n].stack_size, stack_ptr);
         }
     }
 }

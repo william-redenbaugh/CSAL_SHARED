@@ -7,7 +7,7 @@
  * @brief Structure that manages task initialization.
  * @note Designed to help intiailize lists of tasks all at once.
  */
-typedef struct
+typedef struct task_init_descriptor_t
 {
     void (*task_fun)(void *task_params);
     void (*task_init_fun)(void *task_params);
@@ -24,8 +24,5 @@ typedef struct
  *
  */
 void threads_list_init(void);
-
-extern task_init_descriptor_t THREAD_LIST[];
-extern int NUM_THREADS;
 
 #endif
