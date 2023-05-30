@@ -1,6 +1,7 @@
 #include "safe_circular_queue.h"
+#include "unit_check.h"
 
-int safe_circular_queue_init(safe_circular_queue_t *queue, size_t num_elements, size_t element_size){
+int safe_circular_queue_init(safe_circular_queue_t *queue, int num_elements, size_t element_size){
     int ret; 
     if(queue == NULL){
         return OS_RET_NULL_PTR;
@@ -53,7 +54,7 @@ int safe_circular_enqueue(safe_circular_queue_t * queue, size_t element_size, vo
         return OS_RET_INVALID_PARAM;
     }
 
-    if(queue->num_elements_in_queue == queue->num_elements){
+    if(queue->num_elements_in_queue >= queue->num_elements){
         return OS_RET_LOW_MEM_ERROR;
     }
 
@@ -181,4 +182,52 @@ int safe_circular_dequeue_timeout(safe_circular_queue_t * queue, size_t element_
     else{
         return ret;
     }
+}
+
+static safe_circular_queue_t queue;
+int safe_circular_queue_unit_test(void){
+    unit_test_mod_init();
+
+    int ret = safe_circular_queue_init(&queue, 5, sizeof(int));
+    int n = 15; 
+    int k;
+    
+    ret = safe_circular_enqueue_notimeout(&queue, sizeof(n), &n);
+    assert_testcase_equal("enqueue no timeout ret status", ret, OS_RET_OK);
+
+    ret = safe_circular_dequeue_notimeout(&queue, sizeof(n), &k);
+    assert_testcase_equal("dequeue no timeout ret status", ret, OS_RET_OK);
+    assert_testcase_equal("safe_circular_dequeue_notimeout value", k, n); 
+
+    n = 69;
+
+    ret = safe_circular_enqueue(&queue, sizeof(n), &n);
+    assert_testcase_equal("enqueue no timeout ret status", ret, OS_RET_OK);
+    
+    ret = safe_circular_dequeue(&queue, sizeof(n), &k);
+    assert_testcase_equal("dequeue no timeout ret status", ret, OS_RET_OK);
+    assert_testcase_equal("safe_circular_dequeue_notimeout value", k, n); 
+    
+
+    for(n = 0; n < 5; n++){
+        ret = safe_circular_enqueue(&queue, sizeof(n), &n);
+        assert_testcase_equal("enqueue no timeout ret status", ret, OS_RET_OK);
+    }
+
+    for(int n = 0; n < 5; n++){
+        ret = safe_circular_dequeue(&queue, sizeof(n), &k);
+        assert_testcase_equal("dequeue no timeout ret status", ret, OS_RET_OK);
+        assert_testcase_equal("safe_circular_dequeue_notimeout value", k, n); 
+    }
+
+    for(n = 0; n < 5; n++){
+        ret = safe_circular_enqueue(&queue, sizeof(n), &n);
+        assert_testcase_equal("enqueue no timeout ret status", ret, OS_RET_OK);
+    }
+
+    //ret = safe_circular_enqueue(&queue, sizeof(n), &n);
+    //assert_testcase_equal("enqueue no timeout ret status", ret, OS_RET_OK);
+    
+    unit_testcase_end();
+    return OS_RET_OK;
 }

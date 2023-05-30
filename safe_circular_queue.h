@@ -84,4 +84,9 @@ int safe_circular_dequeue_notimeout(safe_circular_queue_t * queue, size_t elemen
  * @note the element_size is passed in as a check to make sure it's the same size as the item inside the circular queue
 */
 int safe_circular_dequeue_timeout(safe_circular_queue_t * queue, size_t element_size, void *element, uint32_t timeout_ms);
+
+/**
+ * @brief Safe Circular Queue testing
+*/
+int safe_circular_queue_unit_test(void);
 #endif
