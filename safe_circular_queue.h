@@ -86,6 +86,11 @@ int safe_circular_dequeue_notimeout(safe_circular_queue_t * queue, size_t elemen
 int safe_circular_dequeue_timeout(safe_circular_queue_t * queue, size_t element_size, void *element, uint32_t timeout_ms);
 
 /**
+ * @brief Deconstructs the circular queue 
+*/
+int safe_circular_deinit(safe_circular_queue_t *queue);
+
+/**
  * @brief Safe Circular Queue testing
 */
 int safe_circular_queue_unit_test(void);
