@@ -7,7 +7,7 @@
 #define PUBLISH_EVENT_QUEUE_MAX_SIZE 16
 #define PER_QUEUE_MAX_SIZE 16
 
-//#define EVENT_MANAGEMENT_DEBUGGING
+// #define EVENT_MANAGEMENT_DEBUGGING
 #ifdef EVENT_MANAGEMENT_DEBUGGING
 #define event_management_println(e) println(e)
 #else
@@ -203,8 +203,8 @@ int subscribe_eventlist(local_event_queue_t *local_eventqueue, int *event_list, 
     if(local_eventqueue->eventqueue_status != OS_STATUS_INITIALIZED){
         return OS_RET_NOT_INITIALIZED;
     }
-
     for(int n = 0; n < num_events; n++){
+        event_management_println("subcribed event in list");
         int ret = subscribe_event(local_eventqueue, (event_type_t)event_list[n]);
         if(ret != OS_RET_OK){
             return ret;
@@ -221,7 +221,7 @@ bool available_events(local_event_queue_t *local_eventqueue){
     if(local_eventqueue->eventqueue_status != OS_STATUS_INITIALIZED){
         return false;
     }
-
+    
     return (local_eventqueue->event_queue.num_elements_in_queue > 0);
 }
 
@@ -238,7 +238,6 @@ event_data_t consume_event(local_event_queue_t *local_eventqueue){
         return data;
     }
 
-    Log.info("%d", local_eventqueue->event_queue.num_elements_in_queue);
     safe_circular_dequeue_notimeout(&local_eventqueue->event_queue, sizeof(data), &data); 
     return data;
 }
