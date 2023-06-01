@@ -1,9 +1,13 @@
 #include "safe_circular_queue.h"
 #include "unit_check.h"
+#include "os_shared_macros.h"
 
-#ifndef align_up
-#define align_up(num, align) \
-    (((num) + ((align) - 1)) & ~((align) - 1))
+//#define CIRCULAR_QUEUE_DEBUGGING
+
+#ifdef CIRCULAR_QUEUE_DEBUGGING
+#define circular_println(e) println(e)
+#else
+#define circular_println(e) void(e)
 #endif
 
 int safe_circular_queue_init(safe_circular_queue_t *queue, int num_elements, size_t element_size)
@@ -45,7 +49,6 @@ int safe_circular_queue_init(safe_circular_queue_t *queue, int num_elements, siz
     // Align memory to closest 32 bit integer(assuming we are a 32bit system for now...  cross this bridge later heh)
     element_size = align_up(element_size, 4);
     int total_memory = element_size * num_elements;
-    Log.info(" Circular Queue: Malloced size: %d", total_memory);
     queue->data_ptr = malloc(total_memory);
 
     // memset(queue->data_ptr, 0, element_size * num_elements);
@@ -177,9 +180,9 @@ int safe_circular_dequeue(safe_circular_queue_t *queue, size_t element_size, voi
         return OS_RET_LIST_EMPTY;
     }
 
-    //os_mut_entry_wait_indefinite(&queue->queue_mutx);
+    os_mut_entry_wait_indefinite(&queue->queue_mutx);
 
-    void *data_ptr = queue->data_ptr + (queue->tail * queue->element_size);
+    void *data_ptr = (void*)align_up((int)queue->data_ptr + (queue->element_size * queue->tail), 4);
 
     memcpy(element, data_ptr, element_size);
 
@@ -189,7 +192,7 @@ int safe_circular_dequeue(safe_circular_queue_t *queue, size_t element_size, voi
     if (queue->tail == queue->num_elements)
         queue->tail = 0;
 
-    //os_mut_exit(&queue->queue_mutx);
+    os_mut_exit(&queue->queue_mutx);
 
     if (os_mut_count(&queue->enqueue_mutex) == 1)
         os_mut_exit(&queue->enqueue_mutex);
@@ -201,10 +204,12 @@ int safe_circular_dequeue_notimeout(safe_circular_queue_t *queue, size_t element
     int ret = safe_circular_dequeue(queue, element_size, element);
     if (ret == OS_RET_OK)
     {
+        circular_println("List has item");
         return ret;
     }
     else if (ret == OS_RET_LIST_EMPTY)
     {
+        circular_println("List is empty.. waiting");
         // Try to acquire the lock before we wait
         // That way it blocks until someone unlocks
         os_mut_try_entry(&queue->dequeue_mutex);
@@ -214,6 +219,7 @@ int safe_circular_dequeue_notimeout(safe_circular_queue_t *queue, size_t element
         {
             return ret;
         }
+
         return safe_circular_dequeue(queue, element_size, element);
     }
     else
@@ -268,58 +274,84 @@ int safe_circular_deinit(safe_circular_queue_t *queue){
     queue->num_elements = 0;
     queue->num_elements_in_queue = 0;
     
-    queue->dequeue_mutex;
-    queue->enqueue_mutex;
-    queue->queue_mutx;
+    os_mut_deinit(&queue->dequeue_mutex);
+    os_mut_deinit(&queue->enqueue_mutex);
+    os_mut_deinit(&queue->queue_mutx);
 
     return OS_RET_OK;
 }
 
-static safe_circular_queue_t queue;
+safe_circular_queue_t queue;
+
+typedef struct {
+    int n_one;
+    uint8_t n_two;
+    short n_three;
+    float n_four;
+}test_struct_t;
+
 int safe_circular_queue_unit_test(void)
 {
     unit_test_mod_init();
-    delay(2000);
-    Log.info("Free Memory: %lu\n", System.freeMemory());
 
-    int ret = safe_circular_queue_init(&queue, 256, sizeof(int));
+    int ret = safe_circular_queue_init(&queue, 128, sizeof(test_struct_t));
     assert_testcase_equal("Circular Queue Init", ret, OS_RET_OK);
+    
+    test_struct_t src;
+    test_struct_t testgate[128];
 
-    int n = 15;
-    int k;
-
-    Log.info("Free Memory: %lu\n", System.freeMemory());
-    for (n = 0; n < 32; n++)
+    for (int n = 0; n < 128; n++)
     {
-        ret = safe_circular_enqueue(&queue, sizeof(n), &n);
+
+        src.n_one = n;
+        src.n_two = 255-n;
+        src.n_three = UINT16_MAX - n;
+        src.n_four = 1024/(float)n;
+        testgate[n] = src;
+
+        ret = safe_circular_enqueue_notimeout(&queue, sizeof(src), &src);
         assert_testcase_equal("enqueue no timeout ret status", ret, OS_RET_OK);
-        Log.info("%d", n);
     }
 
-    for (int n = 0; n < 32; n++)
+    ret = safe_circular_enqueue(&queue, sizeof(src), &src);
+    assert_testcase_equal("enqueue fail ret status", ret, OS_RET_LOW_MEM_ERROR);
+
+    for (int n = 0; n < 128; n++)
     {
-        ret = safe_circular_dequeue(&queue, sizeof(n), &k);
-        assert_testcase_equal("enqueue no timeout ret status", ret, OS_RET_OK);
-        Log.info("%d", k);
-    }
+        ret = safe_circular_dequeue_notimeout(&queue, sizeof(src), &src);
 
-    /*
-    for(int n = 0; n < 4; n++){
-        ret = safe_circular_dequeue(&queue, sizeof(n), &k);
-        assert_testcase_equal("dequeue no timeout ret status", ret, OS_RET_OK);
-        Log.info("%d %d", k, n);
-        assert_testcase_equal("safe_circular_dequeue_notimeout value", k, n);
-    }
-    /*
+        if(src.n_one == testgate[n].n_one){
+            assert_testcase_equal("dequeue n_one_test", 0, 0);
+            
+        }
+        else{
+            assert_testcase_equal("dequeue n_one_test", 0, 1);
+        }
 
-    for(n = 0; n < 5; n++){
-        ret = safe_circular_enqueue(&queue, sizeof(n), &n);
-        assert_testcase_equal("enqueue no timeout ret status", ret, OS_RET_OK);
-    }
+        if(src.n_two == testgate[n].n_two){
+            assert_testcase_equal("dequeue n_two_test", 0, 0);
+        }
+        else{
+            assert_testcase_equal("dequeue n_two_test", 0, 1);
+        }
 
-    //ret = safe_circular_enqueue(&queue, sizeof(n), &n);
-    //assert_testcase_equal("enqueue no timeout ret status", ret, OS_RET_OK);
-    */
+        if(src.n_three == testgate[n].n_three){
+            assert_testcase_equal("dequeue n_three_test", 0, 0);
+        }
+        else{
+            assert_testcase_equal("dequeue n_three_test", 0, 1);
+        }
+
+        if(src.n_four == testgate[n].n_four){
+            assert_testcase_equal("dequeue n_four_test", 0, 0);
+        }
+        else{
+            assert_testcase_equal("dequeue n_four_test", 0, 1);
+        }
+    }    
+    ret = safe_circular_deinit(&queue);
+    assert_testcase_equal("enqueue no timeout ret status", ret, OS_RET_OK);
+
     unit_testcase_end();
     return OS_RET_OK;
 }

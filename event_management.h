@@ -3,10 +3,13 @@
 #include "event_type_list.h"
 #include "../os_mutx.h"
 #include "safe_circular_queue.h"
+#include "os_shared_macros.h"
+#include "os_status.h"
 
 typedef struct{
     os_mut_t local_queue_mutex;
     safe_circular_queue_t event_queue;
+    os_status_t eventqueue_status;
 }local_event_queue_t;
 
 typedef struct local_event_queue_ll_t{
@@ -77,7 +80,7 @@ int subscribe_event(local_event_queue_t *local_eventqueue, event_type_t event);
  * @note A single thread can have multiple queues, but then you're consuming the same
  * event twice wasting resources and execution time
 */
-local_event_queue_t* new_local_eventqueue(void);
+local_event_queue_t* new_local_eventqueue(int num_elements_queue);
 
 /**
  * @brief Checks to see if there are any events in the currently selected local eventspace
@@ -86,7 +89,7 @@ local_event_queue_t* new_local_eventqueue(void);
  * @return true there are events
  * @return false there are no events, or there was an internal error
  */
-bool available_events(int eventspace);
+bool available_events(local_event_queue_t *local_eventqueue);
 
 /**
  * @brief Sit and wait for events to come into an eventspace
@@ -95,5 +98,5 @@ bool available_events(int eventspace);
  * @return event_data_t struct with all our event_data
  * @note Will return the EVENT_TYPE_NONE if there was no actual event returned
  */
-event_data_t consume_event(int eventspace);
+event_data_t consume_event(local_event_queue_t *local_eventqueue);
 #endif
