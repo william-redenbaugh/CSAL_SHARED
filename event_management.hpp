@@ -2,8 +2,8 @@
 #define _EVENT_MANAGEMENT_H
 #include "event_type_list.h"
 #include "../os_mutx.h"
-#include "safe_circular_queue.h"
-#include "os_shared_macros.h"
+#include "safe_circular_queue.hpp"
+#include "os_shared_macros.hpp"
 #include "os_status.h"
 
 typedef struct{
@@ -14,14 +14,14 @@ typedef struct{
 
 typedef struct local_event_queue_ll_t{
     local_event_queue_t *queue; 
-    local_event_queue_ll_t *next;
+    struct local_event_queue_ll_t *next;
 }local_event_queue_ll_t;
 
 typedef struct event_type_queue_ll_t{
     // Event ID
     event_type_t event_id; 
     // Pointer to queue that we need to enqueue
-    event_type_queue_ll_t *next;
+    struct event_type_queue_ll_t *next;
     // Head of linked list of local event queue pointers
     local_event_queue_ll_t *local_event_queue_head;
 }event_type_queue_ll_t;

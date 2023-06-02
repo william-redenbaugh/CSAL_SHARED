@@ -9,7 +9,7 @@
 #define thread_init_debugging(e) void(e)
 #endif
 
-int NUM_THREADS = sizeof(INIT_THREAD_LIST)/sizeof(task_init_descriptor_t);
+int  NUM_THREADS = sizeof(INIT_THREAD_LIST)/sizeof(task_init_descriptor_t);
 
 extern "C" void threads_list_init(void)
 {
