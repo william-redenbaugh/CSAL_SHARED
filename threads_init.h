@@ -1,6 +1,3 @@
-#ifdef __cplusplus
-extern "C"{
-#endif
 
 #ifndef THREADS_INIT_H
 #define THREADS_INIT_H
@@ -28,7 +25,5 @@ typedef struct task_init_descriptor_t
  *
  */
 extern void threads_list_init(void);
-#endif
-#ifdef __cplusplus
-}
+
 #endif

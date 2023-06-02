@@ -1,5 +1,5 @@
 #include "unit_check.h"
-
+#include "stdio.h"
 #ifdef UNIT_CHECK_MODULE
 
 static int total_tests = 0;

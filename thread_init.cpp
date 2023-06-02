@@ -2,7 +2,7 @@
 #include "threads_list.h"
 #include "../os_misc.h"
 
-#define THREADS_INIT_DEBUGGING
+// #define THREADS_INIT_DEBUGGING
 #ifdef THREADS_INIT_DEBUGGING
 #define thread_init_debugging(e) println(e)
 #else
@@ -11,7 +11,7 @@
 
 int NUM_THREADS = sizeof(INIT_THREAD_LIST)/sizeof(task_init_descriptor_t);
 
-extern "C" void threads_list_init(void)
+ void threads_list_init(void)
 {
     for (int n = 0; n < NUM_THREADS; n++)
     {

@@ -1,4 +1,4 @@
-#include "event_management.h"
+#include "event_management.hpp"
 #include "threads_list.h"
 #include "os_error.h"
 #include "../os_misc.h"
