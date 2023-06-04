@@ -1,6 +1,9 @@
 #include "safe_circular_queue.hpp"
 #include "unit_check.h"
 #include "os_shared_macros.hpp"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
 //#define CIRCULAR_QUEUE_DEBUGGING
 
@@ -93,7 +96,7 @@ int safe_circular_enqueue(safe_circular_queue_t *queue, size_t element_size, voi
     // Wraparound queue function
     os_mut_entry_wait_indefinite(&queue->queue_mutx);
 
-    void *data_ptr = (void*)align_up((int)queue->data_ptr + (queue->element_size * queue->head), 4);
+    void *data_ptr = (void*)align_up((intptr_t)queue->data_ptr + (queue->element_size * queue->head), 4);
     memcpy(data_ptr, element, queue->element_size);
 
     queue->head++;
@@ -182,7 +185,7 @@ int safe_circular_dequeue(safe_circular_queue_t *queue, size_t element_size, voi
 
     os_mut_entry_wait_indefinite(&queue->queue_mutx);
 
-    void *data_ptr = (void*)align_up((int)queue->data_ptr + (queue->element_size * queue->tail), 4);
+    void *data_ptr = (void*)align_up((intptr_t)queue->data_ptr + (queue->element_size * queue->tail), 4);
 
     memcpy(element, data_ptr, element_size);
 

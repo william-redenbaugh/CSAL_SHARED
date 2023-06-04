@@ -1,7 +1,6 @@
 
 #ifndef THREADS_INIT_H
 #define THREADS_INIT_H
-#include "sys/_stdint.h"
 #include "../os_thread.h"
 
 /**
