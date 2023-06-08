@@ -1,6 +1,5 @@
 #include "statemachine.h"
-#include <Arduino.h>
-#include "enabled_modules.h"
+#include "../../enabled_modules.h"
 
 #ifdef STATEMACHINE
 

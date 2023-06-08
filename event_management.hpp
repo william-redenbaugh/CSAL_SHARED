@@ -1,6 +1,6 @@
 #ifndef _EVENT_MANAGEMENT_H
 #define _EVENT_MANAGEMENT_H
-#include "event_type_list.h"
+#include "../../event_type_list.h"
 #include "../os_mutx.h"
 #include "safe_circular_queue.hpp"
 #include "os_shared_macros.hpp"
