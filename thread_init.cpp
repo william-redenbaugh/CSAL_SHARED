@@ -1,6 +1,5 @@
 #include "threads_init.h"
-#include "../../threads_list.h"
-#include "../os_misc.h"
+#include "global_includes.h"
 
 // #define THREADS_INIT_DEBUGGING
 #ifdef THREADS_INIT_DEBUGGING

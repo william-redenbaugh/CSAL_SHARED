@@ -1,6 +1,5 @@
 #include "statemachine.h"
-#include "../../enabled_modules.h"
-
+#include "global_includes.h"
 #ifdef STATEMACHINE
 
 statemachine_t *init_new_statemachine(const int num_states, const int init_state, statemachine_state_t *states_list){

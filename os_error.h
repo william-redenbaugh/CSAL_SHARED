@@ -66,6 +66,7 @@
 */
 #define OS_RET_NOT_OWNED (-13)
 
+
 /**
  * @returns when we have an unsupported feature
 */
@@ -77,9 +78,10 @@
 #define OS_RET_NULL_PTR (-15)
 
 /**
- * @returns when the OS found something already initialized
+ * @returns when the OS is already initialized this module
 */
 #define OS_RET_ALREADY_INITED (-16)
+
 /**
  * @brief Converts POSIX Error messages to our OS Error messages
 */

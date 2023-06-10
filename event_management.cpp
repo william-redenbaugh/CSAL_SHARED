@@ -1,9 +1,5 @@
+#include "FreeRTOS.h"
 #include "event_management.hpp"
-#include "../../threads_list.h"
-#include "stdlib.h"
-#include "os_error.h"
-#include "../os_misc.h"
-#include "../os_mutx.h"
 
 #define PUBLISH_EVENT_QUEUE_MAX_SIZE 16
 #define PER_QUEUE_MAX_SIZE 16

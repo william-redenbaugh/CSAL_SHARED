@@ -1,6 +1,6 @@
 #ifndef _STATEMACHINE_H
 #define _STATEMACHINE_H
-#include "../../enabled_modules.h"
+#include "global_includes.h"
 
 #ifdef STATEMACHINE
 

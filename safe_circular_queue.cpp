@@ -1,9 +1,7 @@
-#include "safe_circular_queue.hpp"
+
 #include "unit_check.h"
-#include "os_shared_macros.hpp"
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
+#include "safe_circular_queue.h"
+#include "global_includes.h"
 
 //#define CIRCULAR_QUEUE_DEBUGGING
 

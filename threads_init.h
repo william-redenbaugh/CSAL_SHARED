@@ -1,7 +1,7 @@
 
 #ifndef THREADS_INIT_H
 #define THREADS_INIT_H
-#include "../os_thread.h"
+#include "global_includes.h"
 
 /**
  * @brief Structure that manages task initialization.

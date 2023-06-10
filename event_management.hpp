@@ -1,10 +1,10 @@
 #ifndef _EVENT_MANAGEMENT_H
 #define _EVENT_MANAGEMENT_H
-#include "../../event_type_list.h"
-#include "../os_mutx.h"
-#include "safe_circular_queue.hpp"
-#include "os_shared_macros.hpp"
-#include "os_status.h"
+
+#include "event_type_list.h"
+#include "safe_circular_queue.h"
+#include "csal_shared_includes.h"
+#include "global_includes.h"
 
 typedef struct{
     os_mut_t local_queue_mutex;

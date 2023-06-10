@@ -1,7 +1,7 @@
 #ifndef _UNIT_CHECK_H
 #define _UNIT_CHECK_H
-#include "../../enabled_modules.h"
-#include "../os_misc.h"
+
+#include "global_includes.h"
 #ifdef UNIT_CHECK_MODULE
 
 /**
