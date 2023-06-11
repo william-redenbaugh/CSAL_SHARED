@@ -4,6 +4,7 @@
 #include "FreeRTOS.h"
 #include "FreeRTOSConfig.h"
 #include "semphr.h"
+#include "global_includes.h"
 
 /**
  * @brief Initializes our mutex

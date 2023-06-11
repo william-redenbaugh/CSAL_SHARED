@@ -3,8 +3,7 @@
 
 #include "event_type_list.h"
 #include "safe_circular_queue.h"
-#include "csal_shared_includes.h"
-#include "global_includes.h"
+#include "os_error.h"
 #include "os_mutx.h"
 
 typedef struct{

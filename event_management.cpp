@@ -1,5 +1,6 @@
 #include "FreeRTOS.h"
 #include "event_management.hpp"
+#include "safe_circular_queue.h"
 
 #define PUBLISH_EVENT_QUEUE_MAX_SIZE 16
 #define PER_QUEUE_MAX_SIZE 16
