@@ -5,6 +5,7 @@
 #include "safe_circular_queue.h"
 #include "csal_shared_includes.h"
 #include "global_includes.h"
+#include "os_mutx.h"
 
 typedef struct{
     os_mut_t local_queue_mutex;
