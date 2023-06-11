@@ -66,7 +66,6 @@
 */
 #define OS_RET_NOT_OWNED (-13)
 
-
 /**
  * @returns when we have an unsupported feature
 */
@@ -81,6 +80,11 @@
  * @returns when the OS is already initialized this module
 */
 #define OS_RET_ALREADY_INITED (-16)
+
+/**
+ *@returns when the OS has no available data
+*/
+#define OS_RET_NO_AVAILABLE_DATA (-17)
 
 /**
  * @brief Converts POSIX Error messages to our OS Error messages
