@@ -42,7 +42,7 @@ bool _ipc_run_all_sub_cb(ipc_message_header_t header, uint8_t *data, ipc_subscru
     // Hash index based off the message id.
     ipc_subscribe_cb_list_t list = mod->msg_sub_heads_list[header.message_id];
 
-    //list.ipc_message_node_muttx.lockWaitIndefinite();
+    os_mut_entry_wait_indefinite(&list.ipc_message_node_muttx);
 
     ipc_subscribe_cb_node_t *node = list.head;
     while (node != NULL)
@@ -62,7 +62,7 @@ bool _ipc_run_all_sub_cb(ipc_message_header_t header, uint8_t *data, ipc_subscru
         node = node->next;
     }
 
-    //list.ipc_message_node_muttx.unlock();
+    os_mut_exit(&list.ipc_message_node_muttx);
     return true;
 }
 
@@ -82,7 +82,7 @@ bool _ipc_attach_cb(ipc_subscrube_module_t *mod, int message_id, ipc_sub_cb spec
 
     // Hash index based off the message id.
     ipc_subscribe_cb_list_t list = mod->msg_sub_heads_list[message_id];
-    //list.ipc_message_node_muttx.lockWaitIndefinite();
+    os_mut_entry_wait_indefinite(&list.ipc_message_node_muttx);
 
     ipc_subscribe_cb_node_t *node = list.head;
     if (node == NULL)
@@ -104,7 +104,7 @@ bool _ipc_attach_cb(ipc_subscrube_module_t *mod, int message_id, ipc_sub_cb spec
         node->sub_cb = specified_cb;
     }
 
-    //list.ipc_message_node_muttx.unlock();
+    os_mut_exit(&list.ipc_message_node_muttx);
     return true;
 }
 

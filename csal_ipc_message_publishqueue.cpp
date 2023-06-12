@@ -17,7 +17,7 @@ bool _ipc_publish_message(ipc_message_publish_module_t *module, ipc_message_node
 bool _ipc_push_message_queue(ipc_message_publish_module_t *module, ipc_message_node_t node)
 {
 
-    //module->new_msg_mp.lockWaitIndefinite();
+    os_mut_entry_wait_indefinite(&module->new_msg_mp);
     if (module->max_size == module->current_size)
         return false;
 
@@ -32,13 +32,14 @@ bool _ipc_push_message_queue(ipc_message_publish_module_t *module, ipc_message_n
     if (module->head_pos == module->max_size)
         module->head_pos = 0;
 
-    //module->new_msg_mp.unlock();
+    os_mut_exit(&module->new_msg_mp);
     return true;
 }
 
 bool _ipc_pop_message_queue(ipc_message_publish_module_t *module, ipc_message_node_t *node)
 {
-    //module->new_msg_mp.lockWaitIndefinite();
+
+    os_mut_entry_wait_indefinite(&module->new_msg_mp);
     if (module->current_size == 0)
         return false;
 
@@ -54,27 +55,28 @@ bool _ipc_pop_message_queue(ipc_message_publish_module_t *module, ipc_message_no
     // Rotate around the circular buffer
     if (module->tail_pos == module->max_size)
         module->tail_pos = 0;
-    //module->new_msg_mp.unlock();
+    os_mut_exit(&module->new_msg_mp);
 
     return true;
 }
 
 int _signal_new_event(ipc_message_publish_module_t *module)
 {
-    //module->new_msg_cv.signal(THREAD_SIGNAL_0);
+    os_setbits_signal(&module->new_msg_cv, 0);
     return 0;
 }
 
 void _ipc_msg_queue_wait_new_event(ipc_message_publish_module_t *module)
 {
-    //module->ipc_message_node_muttx.lockWaitIndefinite();
+    os_mut_entry_wait_indefinite(&module->ipc_message_node_muttx);
     int num_msg = module->current_size;
-    //module->ipc_message_node_muttx.unlock();
+    os_mut_exit(&module->ipc_message_node_muttx);
 
     // If there are no messages in queue
-    //if (num_msg == 0)
-    //    module->new_msg_cv.wait_notimeout(THREAD_SIGNAL_0);
-    //module->new_msg_cv.clear(THREAD_SIGNAL_0);
+    if (num_msg == 0)
+        os_waitbits_indefinite(&module->new_msg_cv, 0);
+    
+    os_clearbits(&module->new_msg_cv, 0);
 }
 
 ipc_message_node_t _ipc_block_consume_new_event(ipc_message_publish_module_t *module)
@@ -102,8 +104,7 @@ void ipc_msg_queue_wait_new_event(void)
 
 int  _ipc_msg_ack_cmd_recv(ipc_message_publish_module_t *module){
     int ret = 0;
-    //module->ack_msg_mp.signal(THREAD_SIGNAL_0);
-
+    os_setbits_signal(&module->ack_msg_mp, 0);
     return ret;
 }
 
@@ -113,7 +114,7 @@ int ipc_msg_ack_cmd_recv(void){
 
 bool _ipc_msg_wait_recieve_cmd_ack(ipc_message_publish_module_t *module){
     //os_setbits_signal
-    //module->ack_msg_mp.wait_notimeout(THREAD_SIGNAL_0);
+    os_waitbits_indefinite(&module->ack_msg_mp, 0);
     return true;
 }
 
