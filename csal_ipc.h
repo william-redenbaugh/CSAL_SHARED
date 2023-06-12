@@ -1,4 +1,4 @@
-#ifndef _CSAL_IPH_H
+#ifndef _CSAL_IPC_H
 #define _CSAL_IPC_H
 
 #include "stdlib.h"
