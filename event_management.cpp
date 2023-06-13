@@ -1,4 +1,3 @@
-#include "FreeRTOS.h"
 #include "event_management.hpp"
 #include "safe_circular_queue.h"
 

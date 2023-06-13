@@ -1,9 +1,6 @@
 #ifndef _OS_MUTX_H
 #define _OS_MUTX_H
 
-#include "FreeRTOS.h"
-#include "FreeRTOSConfig.h"
-#include "semphr.h"
 #include "global_includes.h"
 
 /**
