@@ -1,6 +1,7 @@
 
 #include "unit_check.h"
 #include "safe_circular_queue.h"
+#include "string.h"
 #include "global_includes.h"
 
 //#define CIRCULAR_QUEUE_DEBUGGING

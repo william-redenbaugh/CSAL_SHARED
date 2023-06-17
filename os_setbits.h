@@ -1,6 +1,8 @@
 #ifndef _OS_SETBITS_H
 #define _OS_SETBITS_H
 
+#include "stdlib.h"
+#include "stdint.h"
 #include "global_includes.h"
 
 /**
