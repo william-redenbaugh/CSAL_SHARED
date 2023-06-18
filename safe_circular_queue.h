@@ -2,7 +2,7 @@
 #define _SAFE_CIRCULAR_QUEUE_H
 
 #include "os_mutx.h"
-#include "os_status.h"
+#include "stdint.h"
 
 typedef struct safe_circular_queue_t{
     os_mut_t queue_mutx;

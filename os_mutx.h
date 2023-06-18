@@ -2,6 +2,7 @@
 #define _OS_MUTX_H
 
 #include "global_includes.h"
+#include "stdint.h"
 
 /**
  * @brief Initializes our mutex
