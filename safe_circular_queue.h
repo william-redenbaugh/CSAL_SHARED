@@ -90,6 +90,16 @@ int safe_circular_dequeue_timeout(safe_circular_queue_t * queue, size_t element_
 int safe_circular_deinit(safe_circular_queue_t *queue);
 
 /**
+ * @brief Peek the top of the circular queue
+ * @param safe_circular_queue_t *pointer to queue descripter structure
+ * @param size_t element_size size of memory space of element being copied to
+ * @param void *element pointer to memory space of element being copied into
+ * @note the element_size is passed in as a check to make sure it's the same size as the item inside the circular queue
+ * @note returns int error if we couldn't ppeek the top
+*/
+int safe_circuclar_peektop(safe_circular_queue_t * queue, size_t element_size, void *element);
+
+/**
  * @brief Safe Circular Queue testing
 */
 int safe_circular_queue_unit_test(void);

@@ -283,6 +283,36 @@ int safe_circular_deinit(safe_circular_queue_t *queue){
     return OS_RET_OK;
 }
 
+int safe_circuclar_peektop(safe_circular_queue_t * queue, size_t element_size, void *element){
+    if (queue == NULL)
+    {
+        return OS_RET_NULL_PTR;
+    }
+
+    if (element_size != queue->element_size)
+    {
+        return OS_RET_INVALID_PARAM;
+    }
+
+    if (queue->num_elements_in_queue == 0)
+    {
+        return OS_RET_LIST_EMPTY;
+    }
+
+    os_mut_entry_wait_indefinite(&queue->queue_mutx);
+
+    void *data_ptr = (void*)align_up((intptr_t)queue->data_ptr + (queue->element_size * queue->tail), 4);
+
+    memcpy(element, data_ptr, element_size);
+
+    if (queue->tail == queue->num_elements)
+        queue->tail = 0;
+
+    os_mut_exit(&queue->queue_mutx);
+
+    return OS_RET_OK;
+}
+
 safe_circular_queue_t queue;
 
 typedef struct {

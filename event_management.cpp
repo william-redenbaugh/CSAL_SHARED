@@ -1,4 +1,4 @@
-#include "event_management.hpp"
+#include "event_management.h"
 #include "safe_circular_queue.h"
 
 #define PUBLISH_EVENT_QUEUE_MAX_SIZE 16
