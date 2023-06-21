@@ -1,4 +1,5 @@
 #include "local_eventqueue.h"
+#include "os_error.h"
 
 int local_eventqueue_init(local_eventqueue_t *eventqueue, int max_events){
     if (eventqueue == NULL){

@@ -1,8 +1,9 @@
 #ifndef _EVENT_MANAGEMENT_H
 #define _EVENT_MANAGEMENT_H
 
-#include "os_mutx.h"
+#include "os_error.h"
 #include "safe_circular_queue.h"
+#include "os_status.h"
 #include "event_type_list.h"
 
 typedef struct{
@@ -25,10 +26,6 @@ typedef struct event_type_queue_ll_t{
     local_event_queue_ll_t *local_event_queue_head;
 }event_type_queue_ll_t;
 
-typedef struct event_data_t{
-    event_type_t event_id; 
-    void *data_ptr;
-}event_data_t;
 
 #define EVENT_PEEK_TIMEOUT 0
 

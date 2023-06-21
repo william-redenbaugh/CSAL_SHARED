@@ -1,7 +1,8 @@
 #ifndef _LOCAL_EVENTQUEUE_H
 #define _LOCAL_EVENTQUEUE_H
 
-#include "event_management.h"
+#include "safe_circular_queue.h"
+#include "event_type_list.h"
 
 typedef struct local_eventqueue{
     safe_circular_queue_t internal_queue;

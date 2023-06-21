@@ -1,7 +1,7 @@
 #ifndef _OS_MUTX_H
 #define _OS_MUTX_H
 
-#include "global_includes.h"
+#include "platform_cshal.h"
 #include "stdint.h"
 
 /**

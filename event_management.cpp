@@ -1,5 +1,6 @@
 #include "event_management.h"
-#include "safe_circular_queue.h"
+#include "stdlib.h"
+#include "platform_cshal.h"
 
 #define PUBLISH_EVENT_QUEUE_MAX_SIZE 16
 #define PER_QUEUE_MAX_SIZE 16
