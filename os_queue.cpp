@@ -1,6 +1,6 @@
 #include "os_queue.h"
 
-inline int push_element(os_queue_t *queue, void *data){
+inline int push_element(csal_queue_t *queue, void *data){
     if(queue == NULL){
         return OS_RET_NULL_PTR;
     }
@@ -15,7 +15,7 @@ inline int push_element(os_queue_t *queue, void *data){
     return OS_RET_OK;
 }
 
-inline void* pop_element(os_queue_t *queue, int *ret){
+inline void* pop_element(csal_queue_t *queue, int *ret){
     if(queue == NULL){
         *ret = OS_RET_NULL_PTR;
     }
@@ -31,7 +31,7 @@ inline void* pop_element(os_queue_t *queue, int *ret){
     return data;
 }
 
-int os_queue_init(os_queue_t *queue, int max_elements){
+int os_queue_init(csal_queue_t *queue, int max_elements){
     if(queue == NULL){
         return OS_RET_INVALID_PARAM;
     }
@@ -52,7 +52,7 @@ int os_queue_init(os_queue_t *queue, int max_elements){
     return mut_ret;
 }
 
-int os_queue_push_timeout(os_queue_t *queue, void *data, int timeout_ms){
+int os_queue_push_timeout(csal_queue_t *queue, void *data, int timeout_ms){
     int ret = OS_RET_OK;
     os_mut_entry(&queue->queue_lock, timeout_ms);
     if(queue->current_num_elements == queue->max_num_elemnts){
@@ -67,7 +67,7 @@ int os_queue_push_timeout(os_queue_t *queue, void *data, int timeout_ms){
     return ret;
 }
 
-int os_queue_push_indefinite(os_queue_t *queue, void *data){
+int os_queue_push_indefinite(csal_queue_t *queue, void *data){
     int ret = OS_RET_OK;
 
     os_mut_entry_wait_indefinite(&queue->queue_lock);
@@ -85,7 +85,7 @@ int os_queue_push_indefinite(os_queue_t *queue, void *data){
     return OS_RET_OK;
 }
 
-void* os_queue_pop_timeout(os_queue_t *queue, int timeout_ms){
+void* os_queue_pop_timeout(csal_queue_t *queue, int timeout_ms){
     void *data = NULL;
 
     os_mut_entry(&queue->queue_lock, timeout_ms);
@@ -97,7 +97,7 @@ void* os_queue_pop_timeout(os_queue_t *queue, int timeout_ms){
     return data;
 }
 
-void *os_queue_pop_indefinite(os_queue_t *queue){
+void *os_queue_pop_indefinite(csal_queue_t *queue){
     void *data = NULL;
     
     os_mut_entry_wait_indefinite(&queue->queue_lock);

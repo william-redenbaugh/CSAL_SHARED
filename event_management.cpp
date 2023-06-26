@@ -1,6 +1,6 @@
 #include "event_management.h"
 #include "stdlib.h"
-#include "platform_cshal.h"
+#include "global_includes.h"
 
 #define PUBLISH_EVENT_QUEUE_MAX_SIZE 16
 #define PER_QUEUE_MAX_SIZE 16
