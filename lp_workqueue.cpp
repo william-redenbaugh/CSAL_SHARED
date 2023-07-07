@@ -130,7 +130,6 @@ int lp_workqueue_loop(lp_workqueue_t *wq){
         if(node == NULL)
             break;
     }
-    
 
     return OS_RET_NULL_PTR;
 }
