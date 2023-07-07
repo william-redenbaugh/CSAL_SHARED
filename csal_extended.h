@@ -7,5 +7,6 @@
 #include "safe_circular_queue.h"
 #include "local_eventqueue.h"
 #include "event_management.h"
+#include "lp_workqueue.h"
 
 #endif
