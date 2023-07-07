@@ -17,6 +17,9 @@ typedef struct lp_workqueue_func_node{
 
 }lp_workqueue_func_node_t;
 
+/**
+ * @brief Primary low priority work queue
+*/
 typedef struct lp_workqueue{
     lp_workqueue_func_node_t *head;
     os_mut_t wq_mtx;
@@ -31,14 +34,14 @@ typedef struct lp_workqueue{
 */
 int init_lp_workqueue(lp_workqueue_t *wq, int max_elements_inqueue);
 
-
 /**
  * @brief Add a function to the workqueue
  * @param lp_workqueue_t* workqueue
  * @param wq_func function we want to add
  * @param int rough_scheduled_interval in milliseconds
+ * @param lp_workqueue_func_node_t ** pointer to pointer for a node(should we want to remove from wq)
 */
-int lp_workqueue_add_func(lp_workqueue_t *wq, wq_func func, void *param, int interval_ms);
+int lp_workqueue_add_func(lp_workqueue_t *wq, wq_func func, void *param, int interval_ms, lp_workqueue_func_node_t **ptr_node);
 
 /**
  * @brief Run this in the function you want to loop through your low priority function

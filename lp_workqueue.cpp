@@ -14,7 +14,7 @@ int init_lp_workqueue(lp_workqueue_t *wq, int max_elements_inqueue){
     return os_mut_init(&wq->wq_mtx);
 }
 
-int lp_workqueue_add_func(lp_workqueue_t *wq, wq_func func, void *param, int interval_ms){
+int lp_workqueue_add_func(lp_workqueue_t *wq, wq_func func, void *param, int interval_ms, lp_workqueue_func_node_t **ptr_node){
     
     if(wq == NULL){
         return OS_RET_NULL_PTR;
@@ -52,12 +52,42 @@ int lp_workqueue_add_func(lp_workqueue_t *wq, wq_func func, void *param, int int
     node->param = param;
     node->next = NULL;
 
+    if(*ptr_node != NULL){
+        *ptr_node = node;
+    }
+
     ret = os_mut_exit(&wq->wq_mtx);
 
     if(ret != OS_RET_OK){
         return ret;
     }
-    
+}
+
+int lp_workqueue_rm(lp_workqueue *wq, lp_workqueue_func_node_t *ptr_node){
+
+    int ret = os_mut_entry_wait_indefinite(&wq->wq_mtx);
+    if(ret != OS_RET_OK){
+        return ret;
+    }
+    lp_workqueue_func_node_t *node = wq->head;
+    if(node == NULL){
+        goto wq_rm_end;
+    }
+
+    while(node->next != NULL){
+        // Delete then move on
+        if(node->next == ptr_node){
+            lp_workqueue_func_node_t *del_node = node->next;
+            node->next = node->next->next;
+            free(del_node);
+        }
+    }
+
+    wq_rm_end: 
+    ret = os_mut_exit(&wq->wq_mtx);
+    if(ret != OS_RET_OK){
+        return ret;
+    }
 }
 
 int lp_workqueue_loop(lp_workqueue_t *wq){
@@ -75,26 +105,30 @@ int lp_workqueue_loop(lp_workqueue_t *wq){
 
     while (true)
     {
+        // Fill in parameters in threadsafe way
         os_mut_entry_wait_indefinite(&wq->wq_mtx);
         uint64_t next_ms = node->next_ms;
         wq_func func = node->func;
         void *param = node->param;
         os_mut_exit(&wq->wq_mtx);
 
-        if(next_ms < get_current_time_millis()){ 
+        // If we are ready to run next command
+        if(next_ms < get_current_time_millis()){
+            // run cb 
             func(param);
 
+            // Update the next entry in threadsafe way
             os_mut_entry_wait_indefinite(&wq->wq_mtx);
             node->next_ms = get_current_time_millis() + node->interval_ms;
             os_mut_exit(&wq->wq_mtx);            
         }
 
+        // Migrate to next node
         os_mut_entry_wait_indefinite(&wq->wq_mtx);
         node = node->next;
-        
+        os_mut_exit(&wq->wq_mtx);
+
         if(node == NULL)
             break;
-
-        os_mut_exit(&wq->wq_mtx);
     }
 }
