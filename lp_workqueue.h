@@ -49,4 +49,9 @@ int lp_workqueue_add_func(lp_workqueue_t *wq, wq_func func, void *param, int int
 */
 int lp_workqueue_loop(lp_workqueue_t *wq);
 
+/**
+ * @brief Tests out our low priority management thread
+*/
+void test_lprio(void);
+
 #endif
