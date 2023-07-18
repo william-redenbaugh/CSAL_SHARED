@@ -1,9 +1,9 @@
 #include "stdint.h"
 
+static unsigned int Pow2[13] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048}; // declaring this as global array will save 1-2 ms of time
+
 float Q_FFT(int in[], int N, float Frequency)
 {
-
-    unsigned int Pow2[13] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048}; // declaring this as global array will save 1-2 ms of time
 
     int a, c1, f, o, x;
     uint8_t check = 0;
@@ -131,7 +131,8 @@ float Q_FFT(int in[], int N, float Frequency)
         }
 
         if (check == 1)
-        { //  scale the matrics if value higher than 15000 to prevent varible from overloading
+        {
+            //  scale the matrics if value higher than 15000 to prevent varible from overloading
             for (int i = 0; i < Pow2[o]; i++)
             {
                 out_r[i] = out_r[i] / 100;
@@ -168,7 +169,6 @@ float Q_FFT(int in[], int N, float Frequency)
             out_r[i] = -out_r[i] + out_im[i];
         }
         // to find peak sum of mod  of real and imaginery part are considered to increase speed
-
         out_im[i] = out_im[i - 1] + fstp;
         if (fout < out_r[i])
         {
