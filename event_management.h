@@ -6,26 +6,28 @@
 #include "os_status.h"
 #include "event_type_list.h"
 
-typedef struct{
+typedef struct
+{
     os_mut_t local_queue_mutex;
     safe_circular_queue_t event_queue;
     os_status_t eventqueue_status;
-}local_event_queue_t;
+} local_event_queue_t;
 
-typedef struct local_event_queue_ll_t{
-    local_event_queue_t *queue; 
+typedef struct local_event_queue_ll_t
+{
+    local_event_queue_t *queue;
     struct local_event_queue_ll_t *next;
-}local_event_queue_ll_t;
+} local_event_queue_ll_t;
 
-typedef struct event_type_queue_ll_t{
+typedef struct event_type_queue_ll_t
+{
     // Event ID
-    event_type_t event_id; 
+    event_type_t event_id;
     // Pointer to queue that we need to enqueue
     struct event_type_queue_ll_t *next;
     // Head of linked list of local event queue pointers
     local_event_queue_ll_t *local_event_queue_head;
-}event_type_queue_ll_t;
-
+} event_type_queue_ll_t;
 
 #define EVENT_PEEK_TIMEOUT 0
 
@@ -48,7 +50,7 @@ void event_management_thread(void *parameters);
 
 /**
  * @brief Initialization for event management
-*/
+ */
 void event_management_init(void *params);
 
 /**
@@ -66,7 +68,7 @@ int subscribe_eventlist(local_event_queue_t *local_eventqueue, int *event_list, 
  * @brief Subscribes to an event that can be published
  * @param local_event_queue_t *local_eventqueue
  * @param event_type_t event that we are subscribed to
-*/
+ */
 int subscribe_event(local_event_queue_t *local_eventqueue, event_type_t event);
 
 /**
@@ -75,8 +77,8 @@ int subscribe_event(local_event_queue_t *local_eventqueue, event_type_t event);
  * @note No two threads should share an eventqueue
  * @note A single thread can have multiple queues, but then you're consuming the same
  * event twice wasting resources and execution time
-*/
-local_event_queue_t* new_local_eventqueue(int num_elements_queue);
+ */
+local_event_queue_t *new_local_eventqueue(int num_elements_queue);
 
 /**
  * @brief Checks to see if there are any events in the currently selected local eventspace

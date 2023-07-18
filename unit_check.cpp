@@ -5,24 +5,28 @@
 static int total_tests = 0;
 static int passed_tests = 0;
 
-static inline void print_log(const char *ptr){
-    println((char*)ptr);
+static inline void print_log(const char *ptr)
+{
+    println((char *)ptr);
 }
 
-static inline void print_func(const char *func_name){
+static inline void print_func(const char *func_name)
+{
     print_log("Function: ");
     print_log(func_name);
     print_log("Status: ");
 }
 
-bool unit_test_mod_init(void){
-    total_tests = 0; 
+bool unit_test_mod_init(void)
+{
+    total_tests = 0;
     passed_tests = 0;
 
     return true;
 }
 
-bool unit_testcase_begin(char *testcase_name){
+bool unit_testcase_begin(char *testcase_name)
+{
     print_log("\n======================================\n");
     print_log("Test Case Begin: ");
     print_log(testcase_name);
@@ -32,7 +36,8 @@ bool unit_testcase_begin(char *testcase_name){
 }
 
 static char out_log[32];
-bool unit_testcase_end(void){
+bool unit_testcase_end(void)
+{
     print_log("\n======================================\n");
     sprintf(out_log, "%d/%d", passed_tests, total_tests);
     print_log(out_log);
@@ -43,10 +48,12 @@ bool unit_testcase_end(void){
     return true;
 }
 
-bool assert_testcase_in_range(const char *func_name, int x, int high, int low){
+bool assert_testcase_in_range(const char *func_name, int x, int high, int low)
+{
     print_func(func_name);
     total_tests++;
-    if((x <= high) && (x >= low)){
+    if ((x <= high) && (x >= low))
+    {
         print_log("Passed\n");
         passed_tests++;
         return true;
@@ -56,10 +63,12 @@ bool assert_testcase_in_range(const char *func_name, int x, int high, int low){
     return false;
 }
 
-bool assert_testcase_equal(const char *func_name, int a, int b){
+bool assert_testcase_equal(const char *func_name, int a, int b)
+{
     print_func(func_name);
     total_tests++;
-    if(a == b){
+    if (a == b)
+    {
         passed_tests++;
         print_log("Passed\n");
         return true;
@@ -69,11 +78,13 @@ bool assert_testcase_equal(const char *func_name, int a, int b){
     return false;
 }
 
-bool assert_testcase_not_equal(const char *func_name, int a, int b){
+bool assert_testcase_not_equal(const char *func_name, int a, int b)
+{
     print_func(func_name);
     total_tests++;
 
-    if(a != b){
+    if (a != b)
+    {
         passed_tests++;
         print_log("Passed\n");
         return true;
@@ -83,11 +94,13 @@ bool assert_testcase_not_equal(const char *func_name, int a, int b){
     return false;
 }
 
-bool assert_testcase_null(const char *func_name, void *ptr){
+bool assert_testcase_null(const char *func_name, void *ptr)
+{
     print_func(func_name);
 
     total_tests++;
-    if(ptr == NULL){
+    if (ptr == NULL)
+    {
         passed_tests++;
         print_log("Passed\n");
         return true;
@@ -97,11 +110,13 @@ bool assert_testcase_null(const char *func_name, void *ptr){
     return false;
 }
 
-bool assert_testcase_not_null(const char *func_name, void *ptr){
+bool assert_testcase_not_null(const char *func_name, void *ptr)
+{
     print_func(func_name);
 
     total_tests++;
-    if(ptr != NULL){
+    if (ptr != NULL)
+    {
         passed_tests++;
         print_log("Passed\n");
         return true;
@@ -111,12 +126,14 @@ bool assert_testcase_not_null(const char *func_name, void *ptr){
     return false;
 }
 
-bool assert_testcase_bit_set(const char *func_name, int value, int bitmask){
+bool assert_testcase_bit_set(const char *func_name, int value, int bitmask)
+{
     print_func(func_name);
     total_tests++;
     int applied_bitmask = value & bitmask;
     // If we applied the entire bitmask and all bits are still set
-    if(applied_bitmask == bitmask){
+    if (applied_bitmask == bitmask)
+    {
         passed_tests++;
         print_log("Passed\n");
         return true;
@@ -126,12 +143,14 @@ bool assert_testcase_bit_set(const char *func_name, int value, int bitmask){
     return false;
 }
 
-bool assert_testcase_bit_clear(const char *func_name, int value, int bitmask){
+bool assert_testcase_bit_clear(const char *func_name, int value, int bitmask)
+{
     print_func(func_name);
     total_tests++;
     int applied_bitmask = value & bitmask;
     // If we applied the entire bitmask and all bits are still set
-    if(applied_bitmask == 0){
+    if (applied_bitmask == 0)
+    {
         passed_tests++;
         print_log("Passed\n");
         return true;
