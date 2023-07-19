@@ -2,6 +2,7 @@
 #include "stdlib.h"
 #include "global_includes.h"
 
+#ifndef OS_EVENTQUEUE
 #define PUBLISH_EVENT_QUEUE_MAX_SIZE 16
 #define PER_QUEUE_MAX_SIZE 16
 
@@ -274,3 +275,4 @@ event_data_t consume_event(local_event_queue_t *local_eventqueue)
     safe_circular_dequeue_notimeout(&local_eventqueue->event_queue, sizeof(data), &data);
     return data;
 }
+#endif

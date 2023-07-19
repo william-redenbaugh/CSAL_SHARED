@@ -3,7 +3,9 @@
 
 #include "safe_circular_queue.h"
 #include "event_type_list.h"
+#include "enabled_modules.h"
 
+#ifndef OS_EVENTQUEUE_LOCAL
 typedef struct local_eventqueue
 {
     safe_circular_queue_t internal_queue;
@@ -44,4 +46,5 @@ int local_eventqueue_peektop(local_eventqueue_t *eventqueue, event_data_t *data)
  * @param event_data_t *data pointer to data
  */
 int local_eventqueue_dequeue(local_eventqueue_t *eventqueue, event_data_t *data);
+#endif
 #endif

@@ -1,6 +1,7 @@
 #include "os_cli.h"
 #include "global_includes.h"
 
+#ifdef OS_CLI_MODULE
 #define MAX_COMMANDS_LIST 16
 
 static int num_cmd = 0;
@@ -97,3 +98,4 @@ void cli_task(void *parameters)
         os_thread_sleep_ms(10);
     }
 }
+#endif

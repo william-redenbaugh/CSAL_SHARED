@@ -1,6 +1,8 @@
 #ifndef _OS_QUICK_FFT
 #define _OS_QUICK_FFT
 
+#include "enabled_modules.h"
+#ifdef OS_FFT
 /**
     Code  to perform High speed (5-7 times faster) and low accuracy FFT on arduino,
     This  code compromises accuracy for speed,
@@ -25,4 +27,5 @@ Documentation & deatails: https://www.instructables.com/member/abhilash_patel/in
 */
 float Q_FFT(int in[], int N, float Frequency);
 
+#endif
 #endif

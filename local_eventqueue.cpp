@@ -1,6 +1,8 @@
 #include "local_eventqueue.h"
 #include "os_error.h"
 
+#ifndef OS_EVENTQUEUE_LOCAL
+
 int local_eventqueue_init(local_eventqueue_t *eventqueue, int max_events)
 {
     if (eventqueue == NULL)
@@ -50,3 +52,4 @@ int local_eventqueue_dequeue(local_eventqueue_t *eventqueue, event_data_t *data)
 
     return safe_circular_dequeue_notimeout(&eventqueue->internal_queue, sizeof(event_data_t), data);
 }
+#endif

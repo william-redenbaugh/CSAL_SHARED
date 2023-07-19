@@ -4,6 +4,9 @@
 #include "os_error.h"
 #include "stdlib.h"
 #include "os_mutx.h"
+#include "enabled_modules.h"
+
+#ifdef OS_LP_WORKQUEUE_MOD
 
 int init_lp_workqueue(lp_workqueue_t *wq, int max_elements_inqueue)
 {
@@ -194,4 +197,5 @@ void test_lprio(void)
 
     os_add_thread(lowprio_thread, NULL, 8192, NULL);
 }
+#endif
 #endif

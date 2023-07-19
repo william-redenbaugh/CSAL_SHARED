@@ -1,5 +1,6 @@
 #include "stdint.h"
-
+#include "enabled_modules.h"
+#ifdef OS_FFT
 static unsigned int Pow2[13] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048}; // declaring this as global array will save 1-2 ms of time
 
 float Q_FFT(int in[], int N, float Frequency)
@@ -185,3 +186,4 @@ float Q_FFT(int in[], int N, float Frequency)
 
     return (fstep * Frequency / N);
 }
+#endif

@@ -5,6 +5,8 @@
 #include "safe_circular_queue.h"
 #include "os_status.h"
 #include "event_type_list.h"
+#include "enabled_modules.h"
+#ifndef OS_EVENTQUEUE
 
 typedef struct
 {
@@ -97,4 +99,5 @@ bool available_events(local_event_queue_t *local_eventqueue);
  * @note Will return the EVENT_TYPE_NONE if there was no actual event returned
  */
 event_data_t consume_event(local_event_queue_t *local_eventqueue);
+#endif
 #endif

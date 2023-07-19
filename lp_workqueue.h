@@ -2,6 +2,9 @@
 #define _LP_WORKQUEUE_H
 
 #include "platform_cshal.h"
+#include "enabled_modules.h"
+
+#ifdef OS_LP_WORKQUEUE_MOD
 
 /**
  * @brief Function you want to add to the workqueeu
@@ -56,4 +59,5 @@ int lp_workqueue_loop(lp_workqueue_t *wq);
  */
 void test_lprio(void);
 
+#endif
 #endif

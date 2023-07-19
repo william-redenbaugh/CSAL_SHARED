@@ -2,7 +2,9 @@
 #define _OS_CLI_H
 
 #include "stdlib.h"
+#include "enabled_modules.h"
 
+#ifdef OS_CLI_MODULE
 typedef void (*cli_cmd_cb_t)(char *params, size_t size);
 
 typedef struct sub_command_cb_cli{
@@ -18,4 +20,5 @@ typedef struct main_command_cb_cli{
 }main_command_cb_cli_t;
 
 int add_command_command_list(main_command_cb_cli_t *main_cmd);
+#endif
 #endif
