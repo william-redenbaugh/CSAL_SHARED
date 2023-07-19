@@ -9,5 +9,5 @@
 #include "event_management.h"
 #include "lp_workqueue.h"
 #include "os_quick_fft.h"
-
+#include "os_cli.h"
 #endif
