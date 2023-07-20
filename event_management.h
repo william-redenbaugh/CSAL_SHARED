@@ -21,6 +21,14 @@ typedef struct local_event_queue_ll_t
     struct local_event_queue_ll_t *next;
 } local_event_queue_ll_t;
 
+typedef void (*event_cb_t)(event_data_t event_id);
+
+typedef struct event_cb_ll_t
+{
+    event_cb_t event_cb;
+    struct event_cb_ll_t *next;
+} event_cb_ll_t;
+
 typedef struct event_type_queue_ll_t
 {
     // Event ID
@@ -29,6 +37,7 @@ typedef struct event_type_queue_ll_t
     struct event_type_queue_ll_t *next;
     // Head of linked list of local event queue pointers
     local_event_queue_ll_t *local_event_queue_head;
+    event_cb_ll_t *event_cb_queue_head;
 } event_type_queue_ll_t;
 
 #define EVENT_PEEK_TIMEOUT 0
@@ -72,6 +81,14 @@ int subscribe_eventlist(local_event_queue_t *local_eventqueue, int *event_list, 
  * @param event_type_t event that we are subscribed to
  */
 int subscribe_event(local_event_queue_t *local_eventqueue, event_type_t event);
+
+/**
+ * @brief Attach a callback function to a specific event being called
+ * @param local_event_queue_t *local_eventqueue
+ * @param event_type_t event that we are subscribed to
+ * @param event_cb_t event callback function
+ */
+int attach_event(local_event_queue_t *local_eventqueue, event_type_t event, event_cb_t event_cb);
 
 /**
  * @brief An eventqueue to subscribe to events from

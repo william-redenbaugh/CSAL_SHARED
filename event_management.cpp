@@ -30,6 +30,7 @@ void event_management_init(void *params)
     {
         node->event_id = (event_type_t)n;
         node->local_event_queue_head = NULL;
+        node->event_cb_queue_head = NULL;
         node->next = (event_type_queue_ll_t *)malloc(sizeof(event_type_queue_ll_t));
         node = node->next;
         event_management_println("Event generated initialized");
@@ -48,6 +49,79 @@ void event_management_init(void *params)
     }
 
     inited = true;
+}
+
+int attach_event(local_event_queue_t *local_eventqueue, event_type_t event, event_cb_t event_cb)
+{
+    if (local_eventqueue->eventqueue_status != OS_STATUS_INITIALIZED)
+    {
+        return OS_RET_NOT_INITIALIZED;
+    }
+
+    if (inited == false)
+    {
+        return OS_RET_NOT_INITIALIZED;
+    }
+
+    if (local_eventqueue == NULL)
+    {
+        return OS_RET_INVALID_PARAM;
+    }
+
+    event_management_println("Subscribing to event");
+    // Iterate through eventlist to find the correct event
+    // We need to subscribe to
+    event_type_queue_ll_t *node = event_queue_head;
+    while (node != NULL && node->event_id != event)
+    {
+        node = node->next;
+    }
+
+    // How you got here idk, there should be a list for every event
+    if (node == NULL)
+    {
+        event_management_println("Couldn't find correct node for event");
+        return OS_RET_INT_ERR;
+    }
+
+    event_management_println("Found correct node for event");
+
+    os_mut_entry_wait_indefinite(&event_queue_head_mut);
+    // First item in list created.
+    if (node->event_cb_queue_head == NULL)
+    {
+        node->event_cb_queue_head = (event_cb_ll_t *)malloc(sizeof(event_cb_ll_t));
+        node->event_cb_queue_head->event_cb = event_cb;
+        node->event_cb_queue_head->next = NULL;
+        event_management_println("First node in list");
+    }
+    else
+    {
+        // Otherwise we iterate through the list
+        event_cb_ll_t *local_node = node->event_cb_queue_head;
+        while (local_node->next != NULL)
+        {
+            event_management_println("Not first node .. iterating...");
+            // If it's already in the list we return out
+            if (local_node->event_cb == event_cb)
+            {
+                os_mut_exit(&event_queue_head_mut);
+                return OS_RET_ALREADY_INITED;
+            }
+            local_node = local_node->next;
+        }
+
+        event_management_println("First node in list");
+        local_node->next = (event_cb_ll_t *)malloc(sizeof(event_cb_ll_t));
+        local_node = local_node->next;
+        // Populate with our local eventqueue
+        local_node->event_cb = event_cb;
+        // NULL terminate
+        local_node->next = NULL;
+    }
+    // Exit lock
+    os_mut_exit(&event_queue_head_mut);
+    return OS_RET_OK;
 }
 
 int subscribe_event(local_event_queue_t *local_eventqueue, event_type_t event)
@@ -219,6 +293,13 @@ void event_management_thread(void *parameters)
             event_management_println("Submitting event to local queue");
             os_mut_exit(&head->queue->local_queue_mutex);
             head = head->next;
+        }
+
+        event_cb_ll_t *cb_head = node->event_cb_queue_head;
+        while (cb_head != NULL)
+        {
+            cb_head->event_cb(data);
+            cb_head = cb_head->next;
         }
     }
 }
