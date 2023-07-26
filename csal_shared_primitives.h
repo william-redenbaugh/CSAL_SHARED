@@ -7,5 +7,5 @@
 #include "os_error.h"
 #include "os_status.h"
 #include "os_shared_macros.hpp"
-
+#include "os_timer.h"
 #endif
