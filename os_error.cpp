@@ -80,7 +80,7 @@ int os_panic(int ret)
     }
 
     os_thread_sleep_s(10);
-    HAL_ASSERT(ret != 0);
+    OS_ASSERT(ret != 0);
     // If you want to terminate the program when an error occurs, you can use exit(1) here.
     // exit(1);
 
