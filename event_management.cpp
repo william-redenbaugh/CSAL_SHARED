@@ -51,21 +51,11 @@ void event_management_init(void *params)
     inited = true;
 }
 
-int attach_event(local_event_queue_t *local_eventqueue, event_type_t event, event_cb_t event_cb)
+int attach_event(event_type_t event, event_cb_t event_cb)
 {
-    if (local_eventqueue->eventqueue_status != OS_STATUS_INITIALIZED)
-    {
-        return OS_RET_NOT_INITIALIZED;
-    }
-
     if (inited == false)
     {
         return OS_RET_NOT_INITIALIZED;
-    }
-
-    if (local_eventqueue == NULL)
-    {
-        return OS_RET_INVALID_PARAM;
     }
 
     event_management_println("Subscribing to event");

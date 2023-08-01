@@ -88,7 +88,7 @@ int subscribe_event(local_event_queue_t *local_eventqueue, event_type_t event);
  * @param event_type_t event that we are subscribed to
  * @param event_cb_t event callback function
  */
-int attach_event(local_event_queue_t *local_eventqueue, event_type_t event, event_cb_t event_cb);
+int attach_event(event_type_t event, event_cb_t event_cb);
 
 /**
  * @brief An eventqueue to subscribe to events from

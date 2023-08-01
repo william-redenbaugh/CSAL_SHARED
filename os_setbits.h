@@ -3,7 +3,7 @@
 
 #include "stdlib.h"
 #include "stdint.h"
-#include "global_includes.h"
+#include "platform_cshal.h"
 
 /**
  * @brief Initializes our setbits module
