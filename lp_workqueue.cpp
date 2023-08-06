@@ -8,18 +8,19 @@
 
 #ifdef OS_LP_WORKQUEUE_MOD
 
-int init_lp_workqueue(lp_workqueue_t *wq, int max_elements_inqueue)
+int _init_lp_workqueue(lp_workqueue_t *wq, int max_elements_inqueue)
 {
     if (wq == NULL)
     {
         return OS_RET_NULL_PTR;
     }
 
+    wq->shortest_interval_ms = INT64_MAX;
     wq->num_elements = max_elements_inqueue;
     return os_mut_init(&wq->wq_mtx);
 }
 
-int lp_workqueue_add_func(lp_workqueue_t *wq, wq_func func, void *param, int interval_ms, lp_workqueue_func_node_t **ptr_node)
+int _lp_workqueue_add_func(lp_workqueue_t *wq, wq_func func, void *param, int interval_ms, lp_workqueue_func_node_t **ptr_node)
 {
 
     if (wq == NULL)
@@ -70,12 +71,17 @@ int lp_workqueue_add_func(lp_workqueue_t *wq, wq_func func, void *param, int int
         *ptr_node = node;
     }
 
+    if (wq->shortest_interval_ms > interval_ms)
+    {
+        wq->shortest_interval_ms = interval_ms;
+    }
+
     ret = os_mut_exit(&wq->wq_mtx);
 
     return ret;
 }
 
-int lp_workqueue_rm(lp_workqueue *wq, lp_workqueue_func_node_t *ptr_node)
+int _lp_workqueue_rm(lp_workqueue *wq, lp_workqueue_func_node_t *ptr_node)
 {
 
     int ret = os_mut_entry_wait_indefinite(&wq->wq_mtx);
@@ -105,7 +111,7 @@ wq_rm_end:
     return ret;
 }
 
-int lp_workqueue_loop(lp_workqueue_t *wq)
+int _lp_workqueue_loop(lp_workqueue_t *wq)
 {
     if (wq == NULL)
     {
@@ -130,6 +136,7 @@ int lp_workqueue_loop(lp_workqueue_t *wq)
         wq_func func = node->func;
         void *param = node->param;
         os_mut_exit(&wq->wq_mtx);
+
         /**/
         // If we are ready to run next command
         if (next_ms < get_current_time_millis())
@@ -152,7 +159,34 @@ int lp_workqueue_loop(lp_workqueue_t *wq)
             break;
     }
 
-    return OS_RET_NULL_PTR;
+    return OS_RET_OK;
+}
+
+static lp_workqueue_t mod_level_lpworkqueue;
+
+void lp_workqueue_init(void *parameters)
+{
+    int ret = _init_lp_workqueue(&mod_level_lpworkqueue, 64);
+}
+
+void lp_workqueue_thread(void *parameters)
+{
+    for (;;)
+    {
+        int sleep_interval_ms = mod_level_lpworkqueue.shortest_interval_ms;
+        _lp_workqueue_loop(&mod_level_lpworkqueue);
+        os_thread_sleep_ms(sleep_interval_ms);
+    }
+}
+
+int lp_workqueue_add_func(wq_func func, void *param, int interval_ms, lp_workqueue_func_node_t **ptr_node)
+{
+    return _lp_workqueue_add_func(&mod_level_lpworkqueue, func, param, interval_ms, ptr_node);
+}
+
+int lp_workqueue_rm(lp_workqueue_func_node_t *ptr_node)
+{
+    return _lp_workqueue_rm(&mod_level_lpworkqueue, ptr_node);
 }
 
 #ifdef LP_WORKQUEUE_TESTS
