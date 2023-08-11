@@ -122,6 +122,9 @@ int _lp_workqueue_loop(lp_workqueue_t *wq)
     lp_workqueue_func_node_t *node = wq->head;
     ret |= os_mut_exit(&wq->wq_mtx);
 
+    if (node == NULL)
+        return OS_RET_OK;
+
     if (ret != OS_RET_OK)
     {
         return ret;
@@ -137,7 +140,6 @@ int _lp_workqueue_loop(lp_workqueue_t *wq)
         void *param = node->param;
         os_mut_exit(&wq->wq_mtx);
 
-        /**/
         // If we are ready to run next command
         if (next_ms < get_current_time_millis())
         {
