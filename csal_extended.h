@@ -10,4 +10,5 @@
 #include "lp_workqueue.h"
 #include "os_quick_fft.h"
 #include "os_cli.h"
+#include "safe_fifo.h"
 #endif
