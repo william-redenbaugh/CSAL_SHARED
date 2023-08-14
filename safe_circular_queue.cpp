@@ -46,7 +46,12 @@ int safe_circular_queue_init(safe_circular_queue_t *queue, int num_elements, siz
         queue->status = OS_STATUS_FAILED_INIT;
         return ret;
     }
-    os_clearbits(&queue->enqueue_signal, 1);
+    ret = os_clearbits(&queue->enqueue_signal, 1);
+    if (ret != OS_RET_OK)
+    {
+        queue->status = OS_STATUS_FAILED_INIT;
+        return ret;
+    }
 
     if (num_elements == 0 || element_size == 0)
     {
@@ -99,7 +104,11 @@ int safe_circular_enqueue(safe_circular_queue_t *queue, size_t element_size, voi
     }
 
     // Wraparound queue function
-    os_mut_entry_wait_indefinite(&queue->queue_mutx);
+    int ret = os_mut_entry_wait_indefinite(&queue->queue_mutx);
+    if (ret != OS_RET_OK)
+    {
+        return ret;
+    }
 
     circular_println("Segment memory to send");
     void *data_ptr = (void *)align_up((intptr_t)queue->data_ptr + (queue->element_size * queue->head), 4);
@@ -109,12 +118,17 @@ int safe_circular_enqueue(safe_circular_queue_t *queue, size_t element_size, voi
     queue->num_elements_in_queue++;
 
     if (queue->head == queue->num_elements)
+    {
         queue->head = 0;
+    }
 
-    os_mut_exit(&queue->queue_mutx);
+    ret = os_mut_exit(&queue->queue_mutx);
+    if (ret != OS_RET_OK)
+    {
+        return ret;
+    }
 
-    os_setbits_signal(&queue->dequeue_signal, 1);
-    return OS_RET_OK;
+    return os_setbits_signal(&queue->dequeue_signal, 1);
 }
 
 int safe_circular_enqueue_timeout(safe_circular_queue_t *queue, size_t element_size, void *element, uint32_t timeout_ms)
@@ -129,7 +143,11 @@ int safe_circular_enqueue_timeout(safe_circular_queue_t *queue, size_t element_s
         // Try to acquire the lock before we wait
         // That way it blocks until someone unlocks
         ret = os_waitbits(&queue->enqueue_signal, 1, timeout_ms);
-        os_clearbits(&queue->enqueue_signal, 1);
+        if (ret != OS_RET_OK)
+        {
+            return ret;
+        }
+        ret = os_clearbits(&queue->enqueue_signal, 1);
 
         if (ret != OS_RET_OK)
         {
@@ -157,8 +175,13 @@ int safe_circular_enqueue_notimeout(safe_circular_queue_t *queue, size_t element
         // That way it blocks until someone unlocks
         circular_println("Trying to enter mutex");
 
-        os_waitbits_indefinite(&queue->enqueue_signal, 1);
-        os_clearbits(&queue->enqueue_signal, 1);
+        ret = os_waitbits_indefinite(&queue->enqueue_signal, 1);
+        if (ret != OS_RET_OK)
+        {
+            return ret;
+        }
+
+        ret = os_clearbits(&queue->enqueue_signal, 1);
         if (ret != OS_RET_OK)
         {
             return ret;
@@ -191,7 +214,11 @@ int safe_circular_dequeue(safe_circular_queue_t *queue, size_t element_size, voi
     }
 
     circular_println("Dequeue element \n");
-    os_mut_entry_wait_indefinite(&queue->queue_mutx);
+    int ret = os_mut_entry_wait_indefinite(&queue->queue_mutx);
+    if (ret != OS_RET_OK)
+    {
+        return ret;
+    }
 
     void *data_ptr = (void *)align_up((intptr_t)queue->data_ptr + (queue->element_size * queue->tail), 4);
 
@@ -203,10 +230,13 @@ int safe_circular_dequeue(safe_circular_queue_t *queue, size_t element_size, voi
     if (queue->tail == queue->num_elements)
         queue->tail = 0;
 
-    os_mut_exit(&queue->queue_mutx);
+    ret = os_mut_exit(&queue->queue_mutx);
+    if (ret != OS_RET_OK)
+    {
+        return ret;
+    }
 
-    os_setbits_signal(&queue->enqueue_signal, 1);
-    return OS_RET_OK;
+    return os_setbits_signal(&queue->enqueue_signal, 1);
 }
 
 int safe_circular_dequeue_notimeout(safe_circular_queue_t *queue, size_t element_size, void *element)
@@ -222,9 +252,17 @@ int safe_circular_dequeue_notimeout(safe_circular_queue_t *queue, size_t element
         circular_println("List is empty.. waiting");
         // Try to acquire the lock before we wait
         // That way it blocks until someone unlocks
-        os_waitbits_indefinite(&queue->dequeue_signal, 1);
-        os_clearbits(&queue->dequeue_signal, 1);
+        ret = os_waitbits_indefinite(&queue->dequeue_signal, 1);
+        if (ret != OS_RET_OK)
+        {
+            return ret;
+        }
 
+        ret = os_clearbits(&queue->dequeue_signal, 1);
+        if (ret != OS_RET_OK)
+        {
+            return ret;
+        }
         return safe_circular_dequeue(queue, element_size, element);
     }
     else
@@ -245,9 +283,13 @@ int safe_circular_dequeue_timeout(safe_circular_queue_t *queue, size_t element_s
     {
         // Try to acquire the lock before we wait
         // That way it blocks until someone unlocks
-        os_waitbits(&queue->dequeue_signal, 1, timeout_ms);
-        os_clearbits(&queue->dequeue_signal, 1);
+        ret = os_waitbits(&queue->dequeue_signal, 1, timeout_ms);
+        if (ret != OS_RET_OK)
+        {
+            return ret;
+        }
 
+        ret = os_clearbits(&queue->dequeue_signal, 1);
         if (ret != OS_RET_OK)
         {
             return ret;
@@ -283,9 +325,7 @@ int safe_circular_deinit(safe_circular_queue_t *queue)
     queue->num_elements = 0;
     queue->num_elements_in_queue = 0;
 
-    os_mut_deinit(&queue->queue_mutx);
-
-    return OS_RET_OK;
+    return os_mut_deinit(&queue->queue_mutx);
 }
 
 int safe_circuclar_peektop(safe_circular_queue_t *queue, size_t element_size, void *element)
@@ -305,7 +345,11 @@ int safe_circuclar_peektop(safe_circular_queue_t *queue, size_t element_size, vo
         return OS_RET_LIST_EMPTY;
     }
 
-    os_mut_entry_wait_indefinite(&queue->queue_mutx);
+    int ret = os_mut_entry_wait_indefinite(&queue->queue_mutx);
+    if (ret != OS_RET_OK)
+    {
+        return ret;
+    }
 
     void *data_ptr = (void *)align_up((intptr_t)queue->data_ptr + (queue->element_size * queue->tail), 4);
 
@@ -314,8 +358,11 @@ int safe_circuclar_peektop(safe_circular_queue_t *queue, size_t element_size, vo
     if (queue->tail == queue->num_elements)
         queue->tail = 0;
 
-    os_mut_exit(&queue->queue_mutx);
-
+    ret = os_mut_exit(&queue->queue_mutx);
+    if (ret != OS_RET_OK)
+    {
+        return ret;
+    }
     return OS_RET_OK;
 }
 

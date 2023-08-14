@@ -26,8 +26,10 @@ typedef struct safe_fifo_t
     uint32_t tail;                  ///< Index of the tail element
     uint32_t num_elements_in_queue; ///< Number of elements currently in the queue
 
-    os_mut_t requested_data_mutx; ///< Mutex for protecting requested_data
-    uint32_t requested_data;      ///< Number of requested data elements
+    uint32_t requested_data; ///< Number of requested data elements
+    os_mut_t requested_data_mutex;
+
+    os_setbits_t data_ready_bits;
 } safe_fifo_t;
 
 /**
@@ -49,24 +51,6 @@ int safe_fifo_init(safe_fifo_t *queue, int num_elements, size_t element_size);
 int safe_fifo_enqueue(safe_fifo_t *queue, uint32_t num_elements, void *element_list);
 
 /**
- * @brief Enqueue elements into the safe FIFO queue with a timeout.
- * @param queue Pointer to the safe_fifo_t instance.
- * @param num_elements Number of elements to enqueue.
- * @param element_list Pointer to an array of elements to enqueue.
- * @return Number of successfully enqueued elements, or a negative error code.
- */
-int safe_fifo_enqueue_timeout(safe_fifo_t *queue, uint32_t num_elements, void *element_list);
-
-/**
- * @brief Enqueue elements into the safe FIFO queue without timeout.
- * @param queue Pointer to the safe_fifo_t instance.
- * @param num_elements Number of elements to enqueue.
- * @param element_list Pointer to an array of elements to enqueue.
- * @return Number of successfully enqueued elements, or a negative error code.
- */
-int safe_fifo_enqueue_notimeout(safe_fifo_t *queue, uint32_t num_elements, void *element_list);
-
-/**
  * @brief Dequeue elements from the safe FIFO queue.
  * @param queue Pointer to the safe_fifo_t instance.
  * @param num_elements Number of elements to dequeue.
@@ -82,10 +66,10 @@ int safe_fifo_dequeue(safe_fifo_t *queue, uint32_t num_elements, void *element_l
  * @param element_list Pointer to an array where dequeued elements will be stored.
  * @return Number of successfully dequeued elements, or a negative error code.
  */
-int safe_fifo_dequeue_timeout(safe_fifo_t *queue, uint32_t num_elements, void *element_list);
+int safe_fifo_dequeue_timeout(safe_fifo_t *queue, uint32_t num_elements, void *element_list, uint32_t timeout_ms);
 
 /**
- * @brief Dequeue elements from the safe FIFO queue without timeout.
+ * @brief Dequeue elements from the safe FIFO queue without timeout. Will wait until enough bytes are placed into fifo
  * @param queue Pointer to the safe_fifo_t instance.
  * @param num_elements Number of elements to dequeue.
  * @param element_list Pointer to an array where dequeued elements will be stored.
