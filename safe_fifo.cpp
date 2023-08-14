@@ -111,15 +111,23 @@ int safe_fifo_dequeue(safe_fifo_t *queue, uint32_t num_elements, void *element_l
     }
 
     int ret = os_mut_entry_wait_indefinite(&queue->requested_data_mutex);
+    if (ret != OS_RET_OK)
+    {
+        return ret;
+    }
+
+    if (num_elements > queue->requested_data)
+    {
+        num_elements = queue->requested_data;
+    }
     queue->requested_data = 0;
     ret = os_waitbits_indefinite(&queue->data_ready_bits, 1);
     if (ret != OS_RET_OK)
     {
-        ret |= os_mut_exit(&queue->requested_data_mutex);
-
-        if (ret != OS_RET_OK)
+        int n = os_mut_exit(&queue->requested_data_mutex);
+        if (n != OS_RET_OK)
         {
-            return ret;
+            return n;
         }
         return ret;
     }
@@ -176,10 +184,10 @@ int safe_fifo_dequeue_notimeout(safe_fifo_t *queue, uint32_t num_elements, void 
     ret = os_waitbits_indefinite(&queue->data_ready_bits, 1);
     if (ret != OS_RET_OK)
     {
-        ret |= os_mut_exit(&queue->requested_data_mutex);
-        if (ret != OS_RET_OK)
+        int n = os_mut_exit(&queue->requested_data_mutex);
+        if (n != OS_RET_OK)
         {
-            return ret;
+            return n;
         }
         return ret;
     }
@@ -235,10 +243,10 @@ int safe_fifo_dequeue_timeout(safe_fifo_t *queue, uint32_t num_elements, void *e
     ret = os_waitbits(&queue->data_ready_bits, 1, timeout_ms);
     if (ret != OS_RET_OK)
     {
-        ret != os_mut_exit(&queue->requested_data_mutex);
-        if (ret != OS_RET_OK)
+        int n = os_mut_exit(&queue->requested_data_mutex);
+        if (n != OS_RET_OK)
         {
-            return ret;
+            return n;
         }
         return ret;
     }
