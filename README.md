@@ -1,8 +1,7 @@
 # CSAL_SHARED
 Shared libraries that use the HALs that I've written across multiple platforms
 
-
-List of Components and their functions
+## List of Components and their functions
 
 #### Event Management
 - Labed as ```event_management.cpp/.h```
