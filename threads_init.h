@@ -2,8 +2,8 @@
 #ifndef THREADS_INIT_H
 #define THREADS_INIT_H
 
-#include "global_includes.h"
-
+#include "stdint.h"
+#include "platform_cshal.h"
 /**
  * @brief Structure that manages task initialization.
  * @note Designed to help intiailize lists of tasks all at once.
