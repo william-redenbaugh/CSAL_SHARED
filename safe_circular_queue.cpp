@@ -26,6 +26,7 @@ int safe_circular_queue_init(safe_circular_queue_t *queue, int num_elements, siz
 
     if (ret != OS_RET_OK)
     {
+        circular_println("Circular Buffer mutex fail");
         queue->status = OS_STATUS_FAILED_INIT;
         return ret;
     }
@@ -34,27 +35,38 @@ int safe_circular_queue_init(safe_circular_queue_t *queue, int num_elements, siz
 
     if (ret != OS_RET_OK)
     {
+        circular_println("Circular Buffer event signal dequeue fail");
         queue->status = OS_STATUS_FAILED_INIT;
         return ret;
     }
-    os_clearbits(&queue->dequeue_signal, 1);
+    ret = os_clearbits(&queue->dequeue_signal, 1);
+
+    if (ret != OS_RET_OK)
+    {
+        circular_println("Circular Buffer Can't clear bits for dequeue");
+        queue->status = OS_STATUS_FAILED_INIT;
+        return ret;
+    }
 
     ret = os_setbits_init(&queue->enqueue_signal);
 
     if (ret != OS_RET_OK)
     {
+        circular_println("Circular Buffer event signal enqueue fail");
         queue->status = OS_STATUS_FAILED_INIT;
         return ret;
     }
     ret = os_clearbits(&queue->enqueue_signal, 1);
     if (ret != OS_RET_OK)
     {
+        circular_println("Circular Buffer Can't clear bits for enqueue");
         queue->status = OS_STATUS_FAILED_INIT;
         return ret;
     }
 
     if (num_elements == 0 || element_size == 0)
     {
+        circular_println("Invlaid element size of number elements");
         return OS_RET_INVALID_PARAM;
     }
 
@@ -66,6 +78,7 @@ int safe_circular_queue_init(safe_circular_queue_t *queue, int num_elements, siz
     // memset(queue->data_ptr, 0, element_size * num_elements);
     if (queue->data_ptr == NULL)
     {
+        circular_println("unabled to malloc data");
         queue->status = OS_STATUS_FAILED_INIT;
         return OS_RET_LOW_MEM_ERROR;
     }
