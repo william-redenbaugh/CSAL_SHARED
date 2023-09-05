@@ -1,6 +1,5 @@
 #include "os_error.h"
 #include "global_includes.h"
-#include "OS/OSThreadKernel.h"
 
 int os_panic(int ret)
 {
