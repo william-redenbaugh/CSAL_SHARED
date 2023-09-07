@@ -7,7 +7,7 @@ static int passed_tests = 0;
 
 static inline void print_log(const char *ptr)
 {
-    println((char *)ptr);
+    os_println((char *)ptr);
 }
 
 static inline void print_func(const char *func_name)

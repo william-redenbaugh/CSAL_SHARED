@@ -3,29 +3,21 @@
 
 #include "enabled_modules.h"
 #ifdef OS_FFT
-/**
-    Code  to perform High speed (5-7 times faster) and low accuracy FFT on arduino,
-    This  code compromises accuracy for speed,
-    setup:
-
-    1. in[]     : Data array,
-    2. N        : Number of sample (recommended sample size 2,4,8,16,32,64,128...)
-    3.  Frequency: sampling frequency required as input (Hz)
-
-    @param int int[] data array in place calculation
-    @param int N 2^N samples
-    @param float frequency: sampling frequency of data collection
-
-    It will by default return  frequency with max aplitude,
-
-    If sample size is not in power of 2 it will  be clipped to lower side of number.
-    i.e, for 150 number of samples, code will  consider first 128 sample, remaining sample  will be omitted.
-    For Arduino nano,  FFT of more than 256 sample not possible due to mamory limitation
-    Code by ABHILASH
-    Contact:  abhilashpatel121@gmail.com
-Documentation & deatails: https://www.instructables.com/member/abhilash_patel/instructables/
+/*
+  fix_fftr() - forward/inverse FFT on array of real numbers.
+  Real FFT/iFFT using half-size complex FFT by distributing
+  even/odd samples into real/imaginary arrays respectively.
+  In order to save data space (i.e. to avoid two arrays, one
+  for real, one for imaginary samples), we proceed in the
+  following two steps: a) samples are rearranged in the real
+  array so that all even samples are in places 0-(N/2-1) and
+  all imaginary samples in places (N/2)-(N-1), and b) fix_fft
+  is called with fr and fi pointing to index 0 and index N/2
+  respectively in the original array. The above guarantees
+  that fix_fft "sees" consecutive real samples as alternating
+  real and imaginary samples in the complex array.
 */
-float Q_FFT(int in[], int N, float Frequency);
+int fix_fftr(short f[], int m, int inverse);
 
 #endif
 #endif
