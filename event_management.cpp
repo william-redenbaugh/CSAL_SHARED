@@ -8,7 +8,7 @@
 
 // #define EVENT_MANAGEMENT_DEBUGGING
 #ifdef EVENT_MANAGEMENT_DEBUGGING
-#define event_management_println(e) println(e)
+#define event_management_println(e) os_println(e)
 #else
 #define event_management_println(e) (void)e
 #endif
@@ -45,7 +45,7 @@ void event_management_init(void *params)
 
     if (safe_circular_queue_init(&publish_event_queue, PUBLISH_EVENT_QUEUE_MAX_SIZE, sizeof(event_data_t)) != OS_RET_OK)
     {
-        println((char *)"Circular Queue Failed to initialize");
+        event_management_println((char *)"Circular Queue Failed to initialize");
     }
 
     inited = true;
