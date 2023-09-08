@@ -55,4 +55,10 @@ int unsafe_fifo_enqueue(unsafe_fifo_t *queue, size_t element_size, void *element
  */
 int unsafe_fifo_dequeue(unsafe_fifo_t *queue, size_t element_size, void *element);
 
+/**
+ * Deinitializes an unsafe FIFO queue.
+ *
+ * @param fifo A pointer to the initialized `unsafe_fifo_t` structure.
+ */
+void unsafe_fifo_deinit(unsafe_fifo_t *fifo);
 #endif

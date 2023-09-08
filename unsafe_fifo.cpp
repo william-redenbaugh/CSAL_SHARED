@@ -107,3 +107,24 @@ int unsafe_fifo_dequeue(unsafe_fifo_t *queue, size_t element_size, void *element
 
     return OS_RET_OK; // Dequeue successful.
 }
+
+/**
+ * Deinitializes an unsafe FIFO queue.
+ *
+ * @param fifo A pointer to the initialized `unsafe_fifo_t` structure.
+ */
+void unsafe_fifo_deinit(unsafe_fifo_t *fifo)
+{
+    if (fifo == NULL)
+    {
+        return; // Invalid input parameter.
+    }
+
+    free(fifo->data_ptr);
+    fifo->data_ptr = NULL;
+    fifo->num_elements = 0;
+    fifo->element_size = 0;
+    fifo->head = 0;
+    fifo->tail = 0;
+    fifo->num_elements_in_queue = 0;
+}
