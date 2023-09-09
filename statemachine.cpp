@@ -35,6 +35,35 @@ statemachine_t *init_new_statemachine(const int num_states, const int init_state
     return statemachine;
 }
 
+int reinit_statemachine(statemachine_t *statemachine, const int num_states, const int init_state, statemachine_state_t *states_list)
+{
+
+    // Basic bounds check
+    if (num_states <= 0 || states_list == NULL)
+        return OS_RET_INVALID_PARAM;
+    statemachine->current_state = init_state;
+    statemachine->latest_event = 0;
+    statemachine->num_states = num_states;
+    statemachine->latest_event = NULL_EVENT;
+    statemachine->states_list = states_list;
+
+    for (int n = 0; n < num_states; n++)
+    {
+        // Init and clear all event submission data.
+        for (int k = 0; k < statemachine->states_list[n].num_events; k++)
+        {
+            event_submission_t *event_sb = &statemachine->states_list[n].events_list[k];
+
+            if (event_sb == NULL)
+            {
+                return OS_RET_INT_ERR;
+            }
+        }
+    }
+
+    return OS_RET_OK;
+}
+
 int statemachine_submit_event(statemachine_t *statemachine, int event, void *params)
 {
     if (statemachine == NULL)

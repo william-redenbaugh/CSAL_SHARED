@@ -32,9 +32,7 @@ typedef void (*event_function_t)(int event, int old_state, int *next_state, void
 typedef struct event_submission
 {
     event_function_t event_cb_function;
-    void *cb_param_data;
     int event_id;
-
     int next_state;
 
 } event_submission_t;
@@ -90,6 +88,15 @@ int statemachine_set_state(statemachine_t *statemachine, int next_state, void *p
  * @param statemachine_t statemachine
  */
 int deconstruct_statemachine(statemachine_t *statemachine);
+
+/**
+ * @brief We want to reuse the statemachine datastructure somewhere else
+ * @param statemachine_t statemachine
+ * @param int number of states
+ * @param int initialized_state
+ * @param statemachine_state_t list of states available!
+ */
+int reinit_statemachine(statemachine_t *statemachine, const int num_states, const int init_state, statemachine_state_t *states_list);
 
 void test_new_statemachine(void);
 #endif
