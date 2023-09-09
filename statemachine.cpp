@@ -128,4 +128,15 @@ int statemachine_set_state(statemachine_t *statemachine, int next_state, void *p
     return OS_RET_OK;
 }
 
+int deconstruct_statemachine(statemachine_t *statemachine)
+{
+    if (statemachine == NULL)
+    {
+        return OS_RET_NULL_PTR;
+    }
+
+    free(statemachine);
+
+    return OS_RET_OK;
+}
 #endif

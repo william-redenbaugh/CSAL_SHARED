@@ -85,6 +85,12 @@ int statemachine_submit_event(statemachine_t *statemachine, int event, void *par
  */
 int statemachine_set_state(statemachine_t *statemachine, int next_state, void *param);
 
+/**
+ * @brief Deconstructer for the statemachine
+ * @param statemachine_t statemachine
+ */
+int deconstruct_statemachine(statemachine_t *statemachine);
+
 void test_new_statemachine(void);
 #endif
 #endif
