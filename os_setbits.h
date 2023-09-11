@@ -27,7 +27,7 @@ int os_clearbits(os_setbits_t *mod, int bit);
  * @brief Wait for a specific bit to be set
  * @param os_setbits_t *pointer to module
  */
-int os_waitbits(os_setbits_t *mod, uint8_t bit, uint32_t timeout_ms);
+int os_waitbits(os_setbits_t *mod, int bit, uint32_t timeout_ms);
 
 /**
  * @brief Wait indefinitely for a specific bit to be set
