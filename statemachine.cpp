@@ -2,18 +2,19 @@
 #include "global_includes.h"
 #ifdef STATEMACHINE
 
-#define STATEMACHINE_DEBUGGING
+// #define STATEMACHINE_DEBUGGING
 #ifdef STATEMACHINE_DEBUGGING
 #define statemachine_println(e...)    \
     print("[STATEMACHINE MODULE]: "); \
     print(e);                         \
     print("\n")
 #else
-#define statemachine_println(e...) void(e)
+#define statemachine_println(e...) (void)(e)
 #endif
 statemachine_t *init_new_statemachine(const int num_states, const int init_state, statemachine_state_t *states_list)
 {
 
+    os_thread_sleep_s(1);
     // Basic bounds check
     if (num_states <= 0 || states_list == NULL)
         return NULL;
@@ -21,21 +22,29 @@ statemachine_t *init_new_statemachine(const int num_states, const int init_state
     statemachine_println("Allocating Statemachine dataa structures");
     statemachine_t *statemachine = (statemachine_t *)malloc(sizeof(statemachine_t));
 
+    if (statemachine == NULL)
+    {
+        statemachine_println("Couldn't allocate memory");
+    }
+
+    os_thread_sleep_s(1);
     statemachine->current_state = init_state;
     statemachine->latest_event = 0;
     statemachine->num_states = num_states;
     statemachine->latest_event = NULL_EVENT;
     statemachine->states_list = states_list;
 
+    os_thread_sleep_s(1);
     for (int n = 0; n < num_states; n++)
     {
         statemachine_println("Initialing state %d", n);
 
+        os_thread_sleep_ms(100);
         // Init and clear all event submission data.
         for (int k = 0; k < statemachine->states_list[n].num_events; k++)
         {
             event_submission_t *event_sb = &statemachine->states_list[n].events_list[k];
-
+            os_thread_sleep_ms(100);
             statemachine_println("Initialing event %d", k);
             if (event_sb == NULL)
             {
@@ -121,28 +130,34 @@ int statemachine_submit_event(statemachine_t *statemachine, int event, void *par
     if (next_state == -1)
         return OS_RET_INVALID_PARAM;
 
-    statemachine_println("Running exit function");
     // Run exit function
     if (statemachine->states_list[current_state].exit_function != NULL)
+    {
+        statemachine_println("Running exit function");
+
         statemachine->states_list[current_state].exit_function(
             event,
             current_state,
             &next_state,
             params);
+    }
 
-    statemachine_println("Running event callback function");
     // Run event callback
     if (statemachine->states_list[current_state].events_list[event_index].event_cb_function != NULL)
+    {
+        statemachine_println("Running event callback function");
+
         statemachine->states_list[current_state].events_list[event_index].event_cb_function(
             event,
             current_state,
             &next_state,
             params);
+    }
 
-    statemachine_println("Running entry function");
     // Run entry function
     if (statemachine->states_list[next_state].entry_function != NULL)
     {
+        statemachine_println("Running entry function");
         statemachine->states_list[next_state].entry_function(
             event,
             current_state,
