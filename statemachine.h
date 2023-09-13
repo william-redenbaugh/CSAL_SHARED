@@ -39,7 +39,7 @@ typedef struct event_submission
 
 /*
  */
-#define NUM_EVENTS(x) ((sizeof(x) / sizeof(event_submission_t)))
+#define NUM_EVENTS(x) ((sizeof(x) / sizeof(event_submission_t)) - 1)
 
 /**
  * @brief Stucture containing all state specifc data for handling statemachine
