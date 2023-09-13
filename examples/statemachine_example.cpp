@@ -1,5 +1,7 @@
+#ifdef STATEMACHINE_EXAMPLE
 #include "../statemachine.h"
 #include "global_includes.h"
+
 typedef enum test_states
 {
     TEST_STATE_ONE = 0,
@@ -116,3 +118,5 @@ void test_new_statemachine(void)
     statemachine_t *test_sm = init_new_statemachine(NUM_STATES(test_state_list), TEST_STATE_ONE, test_state_list);
     statemachine_submit_event(test_sm, TEST_EVENT_ONE, NULL);
 }
+
+#endif
