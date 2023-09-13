@@ -8,6 +8,7 @@
 
 #ifdef CIRCULAR_QUEUE_DEBUGGING
 #define circular_println(e...) \
+    print("[CIRCULAR QUEUE MODULE]: ")  \ 
     print(e);                  \
     print("\n")
 #else
