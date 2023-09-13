@@ -1,5 +1,5 @@
 #include "../statemachine.h"
-
+#include "global_includes.h"
 typedef enum test_states
 {
     TEST_STATE_ONE = 0,
@@ -111,7 +111,7 @@ void test_new_statemachine(void)
     for (int k = 0; k < num_state_list; k++)
     {
         int current_state = test_state_list[k].num_events;
-        printf("Current state %d", current_state);
+        os_printf("Current state %d\n", current_state);
     }
     statemachine_t *test_sm = init_new_statemachine(NUM_STATES(test_state_list), TEST_STATE_ONE, test_state_list);
     statemachine_submit_event(test_sm, TEST_EVENT_ONE, NULL);
