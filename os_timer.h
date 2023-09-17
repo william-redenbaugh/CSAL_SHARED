@@ -19,7 +19,7 @@
  *
  * @return OS_RET_OK on success, an OS_RET error code on failure.
  */
-int os_timer_init(os_timer_t *timer, os_timer_cb_t cb, int interval_ms);
+int os_timer_init(os_timer_t *timer, os_timer_cb_t cb, int interval_ms, void *params);
 
 /**
  * @brief Start an OS timer in one-shot mode.
