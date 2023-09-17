@@ -7,9 +7,9 @@
 // #define CIRCULAR_QUEUE_DEBUGGING
 
 #ifdef CIRCULAR_QUEUE_DEBUGGING
-#define circular_println(e...) \
-    print("[CIRCULAR QUEUE MODULE]: ")  \ 
-    print(e);                  \
+#define circular_println(e...)          \
+    print("[CIRCULAR QUEUE MODULE]: "); \
+    print(e);                           \
     print("\n")
 #else
 #define circular_println(e...) void(e)
