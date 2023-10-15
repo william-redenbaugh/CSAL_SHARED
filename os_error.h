@@ -104,6 +104,12 @@
 #define OS_RET_NO_AVAILABLE_DATA_STR "OS_RET_NO_AVAILABLE_DATA"
 
 /**
+ * @returns When OS failed to establish connection
+ */
+#define OS_RET_CONNECTION_FAILED (-18)
+#define OS_RET_CONNECTION_FAILED_STR "OS_RET_CONNECTION_FAILED"
+
+/**
  * @brief Converts POSIX Error messages to our OS Error messages
  */
 int posix_os_ret_error_conv(int ret);
