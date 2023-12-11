@@ -12,6 +12,11 @@
 int os_setbits_init(os_setbits_t *mod);
 
 /**
+ * @brief Deletes the setbits
+*/
+int os_setbits_deconstruct(os_setbits_t *mod);
+
+/**
  * @brief Signals a specific bit
  * @param os_setbits_t *pointer to module
  */
