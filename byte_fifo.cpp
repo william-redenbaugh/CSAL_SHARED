@@ -133,7 +133,6 @@ int enqueue_byte_array_fifo(byte_array_fifo* fifo, uint8_t data) {
     return OS_RET_OK;
 }
 
-
 int enqueue_bytes_bytearray_fifo(byte_array_fifo* fifo, uint8_t *data, int len){
     if(fifo == NULL){
         return OS_RET_NULL_PTR;
@@ -244,7 +243,7 @@ int block_until_n_bytes_fifo(byte_array_fifo* fifo, int bytes){
         return OS_RET_INVALID_PARAM;
     }
 
-    if(fifo->someone_blocking == true){
+    if((fifo->someone_blocking == true) && (os_cmp_id(os_current_id(), fifo->current_blocking_thread_handle))){
         return OS_RET_NOT_OWNED;
     }
 
@@ -256,6 +255,7 @@ int block_until_n_bytes_fifo(byte_array_fifo* fifo, int bytes){
 
     // Set correct state
     fifo->someone_blocking = true;
+    fifo->current_blocking_thread_handle = os_current_id();
     fifo->req_count = bytes;
     ret = os_clearbits(&fifo->block_til_data, BIT0);
 
@@ -294,5 +294,22 @@ int block_until_n_bytes_fifo(byte_array_fifo* fifo, int bytes){
     if(ret != OS_RET_OK){
         return ret;
     }
+    return OS_RET_OK;
+}
+
+int fifo_flush(byte_array_fifo* fifo){
+    // Clear someone blocking false
+    int ret = os_mut_entry(&fifo->mutex, 0);
+    if(ret != OS_RET_OK){
+        return ret;
+    }
+    fifo->front = 0;
+    fifo->rear = 0;
+    fifo->count = 0;
+    ret = os_mut_exit(&fifo->mutex);
+    if(ret != OS_RET_OK){
+        return ret;
+    }
+
     return OS_RET_OK;
 }

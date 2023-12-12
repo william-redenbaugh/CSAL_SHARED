@@ -4,6 +4,7 @@
 #include "stdint.h"
 #include "os_mutx.h"
 #include "os_setbits.h"
+#include "platform_cshal.h"
 
 /**
  * @brief Structure for a byte array FIFO (First-In, First-Out) buffer
@@ -17,6 +18,7 @@ typedef struct {
     os_mut_t mutex; /**< Mutex for thread safety */
     os_setbits_t block_til_data;
     int req_count;
+    os_thread_id_t current_blocking_thread_handle;
     bool someone_blocking;
 } byte_array_fifo;
 
@@ -54,6 +56,11 @@ bool is_byte_array_fifo_empty(byte_array_fifo* fifo);
  * @return True if the enqueue operation is successful, otherwise false.
  */
 int enqueue_byte_array_fifo(byte_array_fifo* fifo, uint8_t data);
+
+/**
+ * @brief empty and reset fifo
+*/
+int fifo_flush(byte_array_fifo* fifo);
 
 /**
  * @brief Dequeues a byte from the byte array FIFO.
