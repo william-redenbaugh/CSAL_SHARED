@@ -60,6 +60,26 @@ int destroy_byte_array_fifo(byte_array_fifo* fifo) {
     return OS_RET_OK;
 }
 
+int fifo_byte_array_count(byte_array_fifo* fifo) {
+    if(fifo == NULL){
+        return OS_RET_NULL_PTR;
+    }
+    
+    int ret = os_mut_entry(&fifo->mutex, 0);
+
+    if(ret != OS_RET_OK){
+        return ret;
+    }
+
+    int result = fifo->count;
+
+    ret = os_mut_exit(&fifo->mutex);
+    if(ret != OS_RET_OK){
+        return ret;
+    }
+    return result;
+}
+
 bool is_byte_array_fifo_full(byte_array_fifo* fifo) {
     if(fifo == NULL){
         return OS_RET_NULL_PTR;

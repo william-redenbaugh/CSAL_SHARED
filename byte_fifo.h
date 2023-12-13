@@ -50,6 +50,11 @@ bool is_byte_array_fifo_full(byte_array_fifo* fifo);
 bool is_byte_array_fifo_empty(byte_array_fifo* fifo);
 
 /**
+ * @returns How much data is currently in the fifo
+*/
+int fifo_byte_array_count(byte_array_fifo* fifo);
+
+/**
  * @brief Enqueues a byte into the byte array FIFO.
  * @param fifo Pointer to the FIFO.
  * @param data Data to be enqueued.
