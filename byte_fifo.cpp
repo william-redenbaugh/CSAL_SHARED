@@ -65,7 +65,7 @@ int fifo_byte_array_count(byte_array_fifo* fifo) {
         return OS_RET_NULL_PTR;
     }
     
-    int ret = os_mut_entry(&fifo->mutex, 0);
+    int ret = os_mut_entry_wait_indefinite(&fifo->mutex);
 
     if(ret != OS_RET_OK){
         return ret;
@@ -85,7 +85,7 @@ bool is_byte_array_fifo_full(byte_array_fifo* fifo) {
         return OS_RET_NULL_PTR;
     }
     
-    int ret = os_mut_entry(&fifo->mutex, 0);
+    int ret = os_mut_entry_wait_indefinite(&fifo->mutex);
 
     if(ret != OS_RET_OK){
         return ret;
@@ -104,7 +104,7 @@ bool is_byte_array_fifo_empty(byte_array_fifo* fifo) {
     if(fifo == NULL){
         return OS_RET_NULL_PTR;
     }
-    int ret =os_mut_entry(&fifo->mutex, 0);
+    int ret =os_mut_entry_wait_indefinite(&fifo->mutex);
     if(ret != OS_RET_OK){
         return ret;
     }
@@ -123,7 +123,7 @@ int enqueue_byte_array_fifo(byte_array_fifo* fifo, uint8_t data) {
         return OS_RET_NULL_PTR;
     }
     
-    int ret = os_mut_entry(&fifo->mutex, 0);
+    int ret = os_mut_entry_wait_indefinite(&fifo->mutex);
     if(ret != OS_RET_OK){
         return ret;
     }
@@ -158,7 +158,7 @@ int enqueue_bytes_bytearray_fifo(byte_array_fifo* fifo, uint8_t *data, int len){
         return OS_RET_NULL_PTR;
     }
     
-    int ret = os_mut_entry(&fifo->mutex, 0);
+    int ret = os_mut_entry_wait_indefinite(&fifo->mutex);
     if (ret != OS_RET_OK) {
         return ret;
     }
@@ -179,7 +179,7 @@ int enqueue_bytes_bytearray_fifo(byte_array_fifo* fifo, uint8_t *data, int len){
         fifo->count++;
     }
 
-    if(fifo->req_count <= fifo->count){
+    if(fifo->req_count >= fifo->count){
         ret = os_setbits_signal(&fifo->block_til_data, BIT0);
         if (ret != OS_RET_OK) {
             return ret;
@@ -195,7 +195,7 @@ int dequeue_bytes_bytearray_fifo(byte_array_fifo* fifo, uint8_t *data, int len){
         return OS_RET_NULL_PTR;
     }
 
-    int ret = os_mut_entry(&fifo->mutex, 0);
+    int ret = os_mut_entry_wait_indefinite(&fifo->mutex);
     if (ret != OS_RET_OK) {
         return ret;
     }
@@ -210,14 +210,6 @@ int dequeue_bytes_bytearray_fifo(byte_array_fifo* fifo, uint8_t *data, int len){
         fifo->count--;
     }
 
-    // Signal if we got enough data for whoever
-    if(fifo->req_count <= fifo->count){
-        ret = os_setbits_signal(&fifo->block_til_data, BIT0);
-        if (ret != OS_RET_OK) {
-            return ret;
-        }
-    }
-
     ret = os_mut_exit(&fifo->mutex);
     if(ret != OS_RET_OK){
         return ret;
@@ -229,7 +221,7 @@ int dequeue_byte_array_fifo(byte_array_fifo* fifo, uint8_t* data) {
     if(fifo == NULL){
         return OS_RET_NULL_PTR;
     }
-    int ret = os_mut_entry(&fifo->mutex, 0);
+    int ret = os_mut_entry_wait_indefinite(&fifo->mutex);
     if (ret != OS_RET_OK) {
         return ret;
     }
@@ -267,7 +259,7 @@ int block_until_n_bytes_fifo(byte_array_fifo* fifo, int bytes){
         return OS_RET_NOT_OWNED;
     }
 
-    int ret = os_mut_entry(&fifo->mutex, 0);
+    int ret = os_mut_entry_wait_indefinite(&fifo->mutex);
     
     if(ret != OS_RET_OK){
         return ret;
@@ -305,7 +297,7 @@ int block_until_n_bytes_fifo(byte_array_fifo* fifo, int bytes){
     }
 
     // Clear someone blocking false
-    ret = os_mut_entry(&fifo->mutex, 0);
+    ret = os_mut_entry_wait_indefinite(&fifo->mutex);
     if(ret != OS_RET_OK){
         return ret;
     }
@@ -319,7 +311,7 @@ int block_until_n_bytes_fifo(byte_array_fifo* fifo, int bytes){
 
 int fifo_flush(byte_array_fifo* fifo){
     // Clear someone blocking false
-    int ret = os_mut_entry(&fifo->mutex, 0);
+    int ret = os_mut_entry_wait_indefinite(&fifo->mutex);
     if(ret != OS_RET_OK){
         return ret;
     }
