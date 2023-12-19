@@ -179,7 +179,8 @@ int enqueue_bytes_bytearray_fifo(byte_array_fifo* fifo, uint8_t *data, int len){
         fifo->count++;
     }
 
-    if(fifo->req_count >= fifo->count){
+    if(fifo->req_count <= fifo->count){
+
         ret = os_setbits_signal(&fifo->block_til_data, BIT0);
         if (ret != OS_RET_OK) {
             return ret;
