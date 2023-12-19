@@ -310,6 +310,80 @@ int block_until_n_bytes_fifo(byte_array_fifo* fifo, int bytes){
     return OS_RET_OK;
 }
 
+
+int block_until_n_bytes_fifo_timeout(byte_array_fifo* fifo, int bytes, uint32_t timeout_ms){
+    
+    if(fifo == NULL){
+        return OS_RET_NULL_PTR;
+    }
+
+    if(fifo->count >= bytes){
+        return OS_RET_OK;
+    }
+
+    if(bytes > fifo->size){
+        return OS_RET_INVALID_PARAM;
+    }
+
+    if((fifo->someone_blocking == true) && (os_cmp_id(os_current_id(), fifo->current_blocking_thread_handle))){
+        return OS_RET_NOT_OWNED;
+    }
+
+    int ret = os_mut_entry_wait_indefinite(&fifo->mutex);
+    
+    if(ret != OS_RET_OK){
+        return ret;
+    }
+
+    // Set correct state
+    fifo->someone_blocking = true;
+    fifo->current_blocking_thread_handle = os_current_id();
+    fifo->req_count = bytes;
+    ret = os_clearbits(&fifo->block_til_data, BIT0);
+
+    if(ret != OS_RET_OK){
+        os_mut_exit(&fifo->mutex);
+        return ret;
+    }
+
+    ret = os_mut_exit(&fifo->mutex);
+
+    if(ret != OS_RET_OK){
+        return ret;
+    }
+
+    ret = os_waitbits(&fifo->block_til_data, BIT0, timeout_ms);
+    if(ret != OS_RET_OK){
+        // Since we aren't blocking anymore we gotta remove the block!
+        ret = os_mut_entry_wait_indefinite(&fifo->mutex);
+        if(ret != OS_RET_OK){
+            return ret;
+        }
+        fifo->someone_blocking = false;
+        ret = os_mut_exit(&fifo->mutex);
+        return ret;
+    }
+    
+    // Cleanup
+    ret = os_clearbits(&fifo->block_til_data, BIT0);
+    
+    if(ret != OS_RET_OK){
+        return ret;
+    }
+
+    // Clear someone blocking false
+    ret = os_mut_entry_wait_indefinite(&fifo->mutex);
+    if(ret != OS_RET_OK){
+        return ret;
+    }
+    fifo->someone_blocking = false;
+    ret = os_mut_exit(&fifo->mutex);
+    if(ret != OS_RET_OK){
+        return ret;
+    }
+    return OS_RET_OK;
+}
+
 int fifo_flush(byte_array_fifo* fifo){
     // Clear someone blocking false
     int ret = os_mut_entry_wait_indefinite(&fifo->mutex);

@@ -91,6 +91,15 @@ int dequeue_bytes_bytearray_fifo(byte_array_fifo* fifo, uint8_t *data, int len);
 */
 int block_until_n_bytes_fifo(byte_array_fifo* fifo, int bytes);
 
+
+/**
+ * @brief Waits until we have x bytes in the fifo, blocking operation, otherwise times out if not all the data arrived
+ * @param fifo Pointer to the FIFO.
+ * @param int bytes number of bytes to block on
+ * @param uint32_t timeout_ms max timeout
+*/
+int block_until_n_bytes_fifo_timeout(byte_array_fifo* fifo, int bytes, uint32_t timeout_ms);
+
 /**
  * @brief Tries to put whatever bytes u got into the fifo, will immediately fail out if it won't fit no more
  * @param int len of data you want to enqueue
