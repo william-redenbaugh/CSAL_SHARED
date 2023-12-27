@@ -62,7 +62,7 @@ int lp_workqueue_add_func(wq_func func, void *param, int interval_ms, lp_workque
  * @param lp_workqueue_t* workqueue
  * @param lp_workqueue_func_node_t *pointer to the workqueue node
  */
-int _lp_workqueue_rm(lp_workqueue *wq, lp_workqueue_func_node_t *ptr_node);
+int _lp_workqueue_rm(lp_workqueue_t *wq, lp_workqueue_func_node_t *ptr_node);
 
 /**
  * @brief Removes a workqueue element from the low priority workqueue
