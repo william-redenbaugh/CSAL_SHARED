@@ -168,7 +168,7 @@ static lp_workqueue_t mod_level_lpworkqueue;
 
 void lp_workqueue_init(void *parameters)
 {
-    int ret = _init_lp_workqueue(&mod_level_lpworkqueue, 64);
+    _init_lp_workqueue(&mod_level_lpworkqueue, 64);
 }
 
 void lp_workqueue_thread(void *parameters)
