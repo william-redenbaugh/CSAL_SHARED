@@ -74,6 +74,9 @@ int os_panic(int ret)
         os_printf("Error: %s\n", OS_RET_NO_AVAILABLE_DATA_STR);
         break;
 
+    case OS_RET_NO_FLASH_KEY:
+        os_printf("Errors: %s\n", OS_RET_NO_FLASH_KEY_STR);
+        break;
     default:
         os_printf("Unknown Error: %d\n", ret);
         break;
