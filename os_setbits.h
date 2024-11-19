@@ -40,4 +40,8 @@ int os_waitbits(os_setbits_t *mod, int bit, uint32_t timeout_ms);
  */
 int os_waitbits_indefinite(os_setbits_t *mod, int bit);
 
+#ifndef BIT0
+#define BIT0 (1 << 0)
+#endif
+
 #endif
