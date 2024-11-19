@@ -1,5 +1,6 @@
 #include "safe_fifo.h"
 #include "global_includes.h"
+#include "string.h"
 
 int safe_fifo_init(safe_fifo_t *queue, int num_elements, size_t element_size)
 {
