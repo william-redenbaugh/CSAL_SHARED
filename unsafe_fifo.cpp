@@ -2,6 +2,7 @@
 #include "os_error.h"
 #include "string.h"
 
+
 /**
  * Initializes an unsafe FIFO queue.
  *
