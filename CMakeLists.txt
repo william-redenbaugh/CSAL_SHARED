@@ -12,4 +12,5 @@ target_sources(${NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/safe_fifo.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/thread_init.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/statemachine.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/trig_lut.cpp
 )
