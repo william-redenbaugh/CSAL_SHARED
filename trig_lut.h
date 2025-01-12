@@ -79,4 +79,11 @@ uint8_t beatsin8(uint16_t beats_per_minute, uint8_t lowest, uint8_t highest,
 
 uint8_t sin8(uint8_t angle);
 int16_t sin16(int16_t angle);
+int16_t cos16(int16_t angle);
+uint8_t cos8(uint8_t angle);
+uint8_t mapsin8(uint8_t val, uint8_t minscale, uint8_t maxscale);
+uint16_t mapsin16(uint16_t val, uint16_t minscale, uint16_t maxscale);
+
+uint8_t mapcos8(uint8_t val, uint8_t minscale, uint8_t maxscale);
+uint16_t mapcos16(uint16_t val, uint16_t minscale, uint16_t maxscale);
 #endif

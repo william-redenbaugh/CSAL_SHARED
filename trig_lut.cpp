@@ -4,7 +4,7 @@
 #define SIN8_SCALE 256 // Scale factor for 8-bit fixed-point arithmetic
 
 // Function to calculate sin(x) for fixed-point 8-bit (scaled)
-int16_t sin8(int16_t angle)
+uint8_t sin8(uint8_t angle)
 {
     // Convert angle from fixed-point to floating point
     double radians = (double)angle / SIN8_SCALE * 2 * PI;
@@ -19,6 +19,29 @@ int16_t sin8(int16_t angle)
     for (n = 1; n < 5; n++)
     {
         term *= radians * radians / (2 * n * (2 * n + 1));
+        result += sign * term;
+        sign *= -1; // alternate signs
+    }
+
+    // Scale the result back to 8-bit fixed-point
+    return (int16_t)(result * SIN8_SCALE);
+}
+
+uint8_t cos8(uint8_t angle)
+{
+    // Convert angle from fixed-point to floating point
+    double radians = (double)angle / SIN8_SCALE * 2 * PI;
+
+    // Using the first few terms of the Taylor series for cosine
+    double result = 1.0; // Cosine starts with 1
+    double term = 1.0;   // First term is 1
+    int sign = -1;       // Alternating signs start with '-'
+    int n;
+
+    // Calculate cosine using 5 terms for higher accuracy
+    for (n = 1; n < 5; n++)
+    {
+        term *= radians * radians / (2 * n - 1) / (2 * n);
         result += sign * term;
         sign *= -1; // alternate signs
     }
@@ -51,6 +74,40 @@ int16_t sin16(int16_t angle)
 
     // Scale the result back to 16-bit fixed-point
     return (int16_t)(result * SIN16_SCALE);
+}
+
+int16_t cos16(int16_t angle)
+{
+    // Convert angle from fixed-point to floating point
+    double radians = (double)angle / SIN16_SCALE * 2 * PI;
+
+    // Using the first few terms of the Taylor series for cosine
+    double result = 1.0; // Cosine starts with 1
+    double term = 1.0;   // First term is 1
+    int sign = -1;       // Alternating signs start with '-'
+    int n;
+
+    // Calculate cosine using 5 terms for higher accuracy
+    for (n = 1; n < 5; n++)
+    {
+        term *= radians * radians / (2 * n - 1) / (2 * n);
+        result += sign * term;
+        sign *= -1; // alternate signs
+    }
+
+    // Scale the result back to 16-bit fixed-point
+    return (int16_t)(result * SIN16_SCALE);
+}
+
+int16_t scale16(int16_t i, int16_t scale)
+{
+    int16_t result = ((uint32_t)(i) * (1 + (uint32_t)(scale))) / 65536;
+    return result;
+}
+
+uint8_t scale8(uint8_t i, uint8_t scale)
+{
+    return (((uint16_t)i) * (1 + (uint16_t)(scale))) >> 8;
 }
 
 uint16_t beat88(uint16_t beats_per_minute_88, uint32_t timebase)
@@ -135,9 +192,33 @@ uint8_t beatsin8(uint16_t beats_per_minute, uint8_t lowest, uint8_t highest,
                  uint32_t timebase, uint8_t phase_offset)
 {
     uint8_t beat = beat8(beats_per_minute, timebase);
-    uint8_t beatsin = sin8(beat + phase_offset);
+    uint8_t beatsin = sin8(uint16_t(beat + phase_offset));
     uint8_t rangewidth = highest - lowest;
     uint8_t scaledbeat = scale8(beatsin, rangewidth);
     uint8_t result = lowest + scaledbeat;
     return result;
+}
+
+uint8_t mapsin8(uint8_t val, uint8_t minscale, uint8_t maxscale)
+{
+    uint8_t out = sin8(val);
+    return scale8(out, maxscale - minscale) + minscale;
+}
+
+uint16_t mapsin16(uint16_t val, uint16_t minscale, uint16_t maxscale)
+{
+    uint8_t out = sin16(val);
+    return scale16(out, maxscale - minscale) + minscale;
+}
+
+uint8_t mapcos8(uint8_t val, uint8_t minscale, uint8_t maxscale)
+{
+    uint8_t out = cos8(val);
+    return scale8(out, maxscale - minscale) + minscale;
+}
+
+uint16_t mapcos16(uint16_t val, uint16_t minscale, uint16_t maxscale)
+{
+    uint8_t out = cos16(val);
+    return scale16(out, maxscale - minscale) + minscale;
 }
