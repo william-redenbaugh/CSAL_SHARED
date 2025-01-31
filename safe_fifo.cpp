@@ -181,6 +181,10 @@ int safe_fifo_dequeue_notimeout(safe_fifo_t *queue, uint32_t num_elements, void 
     queue->requested_data = num_elements;
     os_mut_exit(&queue->requested_data_mutex);
     
+    if(num_elements < queue->num_elements_in_queue){
+        os_setbits_signal(&queue->data_ready_bits, 1);
+    }
+
     ret = os_waitbits_indefinite(&queue->data_ready_bits, 1);
     if (ret != OS_RET_OK)
     {
@@ -192,10 +196,6 @@ int safe_fifo_dequeue_notimeout(safe_fifo_t *queue, uint32_t num_elements, void 
         return ret;
     }
 
-    if (ret != OS_RET_OK)
-    {
-        return ret;
-    }
 
     ret = os_clearbits(&queue->data_ready_bits, 1);
     if (ret != OS_RET_OK)
